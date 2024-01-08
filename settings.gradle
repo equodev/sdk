@@ -1,0 +1,9 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'sdk'
+
+include 'core'
