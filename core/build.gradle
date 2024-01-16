@@ -1,19 +1,21 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     implementation 'org.apache.felix:org.apache.felix.framework:7.0.5'
     implementation 'org.apache.felix:org.apache.felix.atomos:1.0.0'
-    implementation 'com.equo:com.equo.chromium:95.0.17'
+    implementation 'com.equo:com.equo.chromium:106.0.0-SNAPSHOT'
     runtimeOnly 'org.eclipse.platform:org.eclipse.osgi.services:3.11.100'
     runtimeOnly 'org.eclipse.platform:org.eclipse.osgi.util:3.7.200'
     runtimeOnly 'org.apache.felix:org.apache.felix.scr:2.2.6'
-    runtimeOnly 'com.equo:com.equo.chromium.cef.gtk.linux.x86_64:95.0.17'
+    runtimeOnly 'com.equo:com.equo.chromium.cef.gtk.linux.x86_64:106.0.0-SNAPSHOT'
 }
 
 sourceCompatibility = 11
@@ -21,4 +23,15 @@ targetCompatibility = 11
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId "com.equo"
+            artifactId "com.equo.${rootProject.name}"
+            version "0.1-SNAPSHOT"
+        }
+    }
 }
