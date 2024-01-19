@@ -86,7 +86,7 @@ public class EquoAppBuilder {
             uri = CLASSPATH_URI + "index.html";
         }
 
-        middlewareService.addResourceHandler(CLASSPATH_SCHEME, "", (request, headers) -> {
+        middlewareService.addResourceHandler(CLASSPATH_SCHEME, CUSTOM_URL, (request, headers) -> {
             String resourceToFind = request.getUrl().substring(CLASSPATH_URI.length());
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceToFind);
             if (inputStream != null) {
