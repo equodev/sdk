@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EquoAppBuilder {
+    public static final String CHROMIUM_ARGS = "chromium.args";
+    public static final String NEW_TAB_URL_SWITCH = "new-tab-url";
     private static final String CLASSPATH_SCHEME = "classpath";
     private static final String CUSTOM_URL = "equo.app";
     private static final String CLASSPATH_URI = String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
@@ -25,6 +27,20 @@ public class EquoAppBuilder {
         middlewareService = IMiddlewareService.findServiceReference();
     }
 
+    private void addChromiumArgs(String... values) {
+        StringBuilder chromium_args = new StringBuilder(System.getProperty(CHROMIUM_ARGS, ""));
+        for (String value : values) {
+            chromium_args.append(";").append(value);
+        }
+        System.setProperty(CHROMIUM_ARGS, chromium_args.toString());
+    }
+
+    public EquoAppBuilder setNewTabPageURL(String url) {
+        if (Boolean.getBoolean("chrome_runtime")) {
+            addChromiumArgs(NEW_TAB_URL_SWITCH + "=" + url);
+        }
+        return this;
+    }
 
     private void _launch(String url) {
         ChromiumBrowser.standalone(url);
