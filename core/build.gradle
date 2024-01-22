@@ -4,11 +4,18 @@ plugins {
 }
 
 repositories {
+    maven {
+        url 'https://dl.equo.dev/middleware/mvn/release'
+    }
+    maven {
+        url 'https://dl.equo.dev/chromium-swt-ee/equo/mvn'
+    }
     mavenLocal()
     mavenCentral()
 }
 
 dependencies {
+    implementation 'com.equo:com.equo.middleware.bom:1.3.4'
     implementation 'org.apache.felix:org.apache.felix.framework:7.0.5'
     implementation 'org.apache.felix:org.apache.felix.atomos:1.0.0'
     implementation 'com.equo:com.equo.chromium:106.0.0-SNAPSHOT'
