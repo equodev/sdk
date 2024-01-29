@@ -19,7 +19,7 @@ public interface CommonFolders {
         }
 
         /**
-         * The function returns the value of the enum instance.
+         * Returns the value of the enum instance.
          *
          * @return The method is returning the value of the enum instance.
          */
@@ -29,7 +29,7 @@ public interface CommonFolders {
     }
 
     /**
-     * The function returns the path of the user's home directory.
+     * Returns the path of the user's home directory.
      *
      * @return The value of the system property "user.home", which represents the user's home directory.
      */
@@ -38,7 +38,7 @@ public interface CommonFolders {
     }
 
     /**
-     * The function returns the path of the cache directory based on the rootConfig.
+     * Returns the path of the cache directory based on the rootConfig.
      *
      * @param rootConfig The rootConfig directory where the cache app directory will be created.
      *
@@ -47,7 +47,7 @@ public interface CommonFolders {
     Path cacheDirHome(String rootConfig);
 
     /**
-     * The function returns the path of the data directory based on the rootConfig.
+     * Returns the path of the data directory based on the rootConfig.
      *
      * @param rootConfig The rootConfig directory where the data app directory will be created.
      *
@@ -56,7 +56,7 @@ public interface CommonFolders {
     Path dataDirHome(String rootConfig);
 
     /**
-     * The function returns the path of the state directory based on the rootConfig.
+     * Returns the path of the state directory based on the rootConfig.
      *
      * @param rootConfig The rootConfig directory where the state app directory will be created.
      *
@@ -65,7 +65,7 @@ public interface CommonFolders {
     Path stateDirHome(String rootConfig);
 
     /**
-     * The function returns the path of the runtime directory based on the rootConfig.
+     * Returns the path of the runtime directory based on the rootConfig.
      *
      * @param rootConfig The rootConfig directory where the runtime app directory will be created.
      *
@@ -74,7 +74,7 @@ public interface CommonFolders {
     Path runtimeDirHome(String rootConfig);
 
     /**
-     * The function returns the path of the config directory based on the rootConfig.
+     * Returns the path of the config directory based on the rootConfig.
      *
      * @param rootConfig The rootConfig directory where the config app directory will be created.
      *
@@ -83,7 +83,7 @@ public interface CommonFolders {
     Path configDir(String rootConfig);
 
     /**
-     * The function returns an instance of a class based on the operating system being used.
+     * Returns an instance of a class based on the operating system being used.
      *
      * @return The method returns an instance of the `CommonFolders` class, depending on the operating system in use. If
      * it's Windows, it returns an instance of the `Windows` class; if it's Macintosh, it returns an instance of the

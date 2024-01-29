@@ -12,7 +12,7 @@ public class OS {
     private static OSType osType = OSType.OSUndefined;
 
     /**
-     * The function checks if the operating system is Windows.
+     * Checks if the operating system is Windows.
      *
      * @return The method is returning a boolean value.
      */
@@ -21,7 +21,7 @@ public class OS {
     }
 
     /**
-     * The function checks if the operating system is Macintosh.
+     * Checks if the operating system is Macintosh.
      *
      * @return The method is returning a boolean value.
      */
@@ -30,7 +30,7 @@ public class OS {
     }
 
     /**
-     * The function checks if the operating system is Linux.
+     * Checks if the operating system is Linux.
      *
      * @return The method is returning a boolean value.
      */

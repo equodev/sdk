@@ -30,7 +30,7 @@ public class EquoApp {
     }
 
     /**
-     * The function creates and returns a new instance of the EquoApp class with the specified appId.
+     * Creates and returns a new instance of the EquoApp class with the specified appId.
      *
      * @param appId Represents the unique identifier for the EquoApp.
      *
@@ -45,11 +45,12 @@ public class EquoApp {
         for (String value : values) {
             chromium_args.append(";").append(value);
         }
+        System.out.println(chromium_args);
         System.setProperty(CHROMIUM_ARGS, chromium_args.toString());
     }
 
     /**
-     * The function sets the URL of the new tab page for the chromium app.
+     * Sets the URL of the new tab page for the chromium app.
      *
      * @param url Represents the URL of the new tab page.
      *
@@ -63,7 +64,7 @@ public class EquoApp {
     }
 
     /**
-     * The function sets the app ID.
+     * Sets the app ID.
      *
      * @param appID Represents the ID of the application.
      */
@@ -91,7 +92,7 @@ public class EquoApp {
     }
 
     /**
-     * The function adds an OSGi compatibility layer to the EquoApp by starting Felix in a daemon thread.
+     * Adds an OSGi compatibility layer to the EquoApp by starting Felix in a daemon thread.
      *
      * @return The method is returning an instance of the EquoApp class.
      */
@@ -126,7 +127,7 @@ public class EquoApp {
     }
 
     /**
-     * The function enable the browser UI in an EquoApp.
+     * Enable the browser UI in an EquoApp.
      *
      * @return The method is returning an instance of the EquoApp class.
      */
@@ -136,8 +137,8 @@ public class EquoApp {
     }
 
     /**
-     * The function sets up a resource handler for a given filename and launches the application. By default, try to
-     * load the index.html
+     * Sets up a resource handler for a given filename and launches the application. By default, try to load the
+     * index.html
      *
      * @param filename Represents the name of the file to be launched.
      */
@@ -162,7 +163,7 @@ public class EquoApp {
     }
 
     /**
-     * The function launches the application with specified url.
+     * Launches the application with specified url.
      *
      * @param url Represents the URL that needs to be launched.
      */
@@ -171,7 +172,7 @@ public class EquoApp {
     }
 
     /**
-     * The function sets up a resource handler, try to load the index.html and launches the application.
+     * Sets up a resource handler, try to load the index.html and launches the application.
      */
     public void launch() {
         // By default, try to load the index.html in the ClassPath
