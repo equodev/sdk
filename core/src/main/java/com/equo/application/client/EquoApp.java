@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EquoAppBuilder {
+public class EquoApp {
     public static final String CHROMIUM_ARGS = "chromium.args";
     public static final String NEW_TAB_URL_SWITCH = "new-tab-url";
     public static final String APP_ID_SWITCH = "app-id";
@@ -24,9 +24,20 @@ public class EquoAppBuilder {
     private static final String RESOURCE_NOT_FOUND_MSG = "Resource not found: ";
     private final IMiddlewareService middlewareService;
 
-    public EquoAppBuilder(String appId) {
+    private EquoApp(String appId) {
         setAppId(appId);
         middlewareService = IMiddlewareService.findServiceReference();
+    }
+
+    /**
+     * Creates and returns a new instance of the EquoApp class with the specified appId.
+     *
+     * @param appId Represents the unique identifier for the EquoApp.
+     *
+     * @return An instance of the EquoApp class with the specified appId.
+     */
+    public static EquoApp create(String appId) {
+        return new EquoApp(appId);
     }
 
     private void addChromiumArgs(String... values) {
@@ -34,16 +45,29 @@ public class EquoAppBuilder {
         for (String value : values) {
             chromium_args.append(";").append(value);
         }
+        System.out.println(chromium_args);
         System.setProperty(CHROMIUM_ARGS, chromium_args.toString());
     }
 
-    public EquoAppBuilder setNewTabPageURL(String url) {
+    /**
+     * Sets the URL of the new tab page for the chromium app.
+     *
+     * @param url Represents the URL of the new tab page.
+     *
+     * @return The method is returning an instance of the EquoApp class.
+     */
+    public EquoApp setNewTabPageURL(String url) {
         if (Boolean.getBoolean("chrome_runtime")) {
             addChromiumArgs(NEW_TAB_URL_SWITCH + "=" + url);
         }
         return this;
     }
 
+    /**
+     * Sets the app ID.
+     *
+     * @param appID Represents the ID of the application.
+     */
     private void setAppId(String appID) {
         addChromiumArgs(APP_ID_SWITCH + "=" + appID);
     }
@@ -67,7 +91,12 @@ public class EquoAppBuilder {
         return Paths.get(baseDir.toString(), "equo", "application");
     }
 
-    public EquoAppBuilder addOSGICompatibilityLayer() {
+    /**
+     * Adds an OSGi compatibility layer to the EquoApp by starting Felix in a daemon thread.
+     *
+     * @return The method is returning an instance of the EquoApp class.
+     */
+    public EquoApp addOSGICompatibilityLayer() {
         /*
          * Start Felix in a daemon thread. It inherits this property and allows us easy
          * control from the main thread.
@@ -97,11 +126,22 @@ public class EquoAppBuilder {
         return this;
     }
 
-    public EquoAppBuilder useChromeUI() {
+    /**
+     * Enable the browser UI in an EquoApp.
+     *
+     * @return The method is returning an instance of the EquoApp class.
+     */
+    public EquoApp withBrowserUI() {
         System.setProperty("chrome_runtime", "true");
         return this;
     }
 
+    /**
+     * Sets up a resource handler for a given filename and launches the application. By default, try to load the
+     * index.html
+     *
+     * @param filename Represents the name of the file to be launched.
+     */
     public void launch(String filename) {
         String uri = filename;
         if (uri == null || uri.isEmpty()) {
@@ -122,10 +162,18 @@ public class EquoAppBuilder {
         _launch(uri);
     }
 
+    /**
+     * Launches the application with specified url.
+     *
+     * @param url Represents the URL that needs to be launched.
+     */
     public void launch(URL url) {
         _launch(url.toString());
     }
 
+    /**
+     * Sets up a resource handler, try to load the index.html and launches the application.
+     */
     public void launch() {
         // By default, try to load the index.html in the ClassPath
         launch("");
