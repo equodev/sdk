@@ -11,14 +11,29 @@ public class OS {
 
     private static OSType osType = OSType.OSUndefined;
 
+    /**
+     * The function checks if the operating system is Windows.
+     *
+     * @return The method is returning a boolean value.
+     */
     public static boolean isWindows() {
         return getOSType() == OSType.OSWindows;
     }
 
+    /**
+     * The function checks if the operating system is Macintosh.
+     *
+     * @return The method is returning a boolean value.
+     */
     public static boolean isMacintosh() {
         return getOSType() == OSType.OSMacintosh;
     }
 
+    /**
+     * The function checks if the operating system is Linux.
+     *
+     * @return The method is returning a boolean value.
+     */
     public static boolean isLinux() {
         return getOSType() == OSType.OSLinux;
     }

@@ -38,8 +38,8 @@ public class Windows implements CommonFolders {
     }
 
     @Override
-    public Path configDir() {
-        return Path.of(localAppData(), EQUO, Dir.CONFIG.getDir());
+    public Path configDir(String rootConfig) {
+        return Path.of(localAppData(), EQUO, Dir.CONFIG.getDir(), rootConfig);
     }
 
 }

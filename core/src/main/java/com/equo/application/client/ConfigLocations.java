@@ -53,39 +53,88 @@ public class ConfigLocations {
 		return path;
 	}
 
+	/**
+	 * The function sets the root configuration and updates the directory homes.
+	 *
+	 * @param newRootConfig The new value for the root configuration.
+	 */
 	public static void setRootConfig(String newRootConfig) {
 		rootConfig = newRootConfig;
 		setDirHomes();
 	}
 
+	/**
+	 * The function updates the directory path for the the cache directory path.
+	 *
+	 * @param newPath Represents the new path that will be used to override the
+	 * cache directory path.
+	 */
 	public static void overrideCacheHome(Path newPath) {
 		overrideDirs.put(Dir.CACHE, newPath);
 	}
 
+	/**
+	 * The function updates the directory path for the data directory path.
+	 *
+	 * @param newPath Represents the new path that will be used to override the
+	 * data home directory.
+	 */
 	public static void overrideDataHome(Path newPath) {
 		overrideDirs.put(Dir.DATA, newPath);
 	}
 
+	/**
+	 * The function updates the directory path for the state directory path.
+	 *
+	 * @param newPath Represents the new path that will be used to override the
+	 * state directory.
+	 */
 	public static void overrideStateHome(Path newPath) {
 		overrideDirs.put(Dir.STATE, newPath);
 	}
 
+	/**
+	 * The function updates the directory path for the runtime directory path.
+	 *
+	 * @param newPath Represents the new path that will be used to override the
+	 * runtime directory.
+	 */
 	public static void overrideRuntimeHome(Path newPath) {
 		overrideDirs.put(Dir.RUNTIME, newPath);
 	}
 
+	/**
+	 * The function returns the path to the cache directory.
+	 *
+	 * @return The directory path for the cache directory.
+	 */
 	public static Path getDirCacheHome() {
 		return getDir(Dir.CACHE);
 	}
 
+	/**
+	 * The function returns the path to the data directory.
+	 *
+	 * @return The directory path for the data directory.
+	 */
 	public static Path getDirDataHome() {
 		return getDir(Dir.DATA);
 	}
 
+	/**
+	 * The function returns the path to the state directory.
+	 *
+	 * @return The directory path for the state directory.
+	 */
 	public static Path getDirStateHome() {
 		return getDir(Dir.STATE);
 	}
 
+	/**
+	 * The function returns the path to the runtime directory.
+	 *
+	 * @return The directory path for the runtime directory.
+	 */
 	public static Path getDirRuntimeHome() {
 		return getDir(Dir.RUNTIME);
 	}

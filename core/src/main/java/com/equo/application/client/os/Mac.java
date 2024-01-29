@@ -42,8 +42,8 @@ public class Mac implements CommonFolders {
     }
 
     @Override
-    public Path configDir() {
-        return Path.of(getAppSupportPath(), EQUO, Dir.CONFIG.getDir());
+    public Path configDir(String rootConfig) {
+        return Path.of(getAppSupportPath(), EQUO, Dir.CONFIG.getDir(), rootConfig);
     }
 
 }

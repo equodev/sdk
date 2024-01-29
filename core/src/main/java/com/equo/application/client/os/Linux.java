@@ -59,8 +59,8 @@ public class Linux implements CommonFolders {
     }
 
     @Override
-    public Path configDir() {
-        return Path.of(userHome(), CONFIG, EQUO);
+    public Path configDir(String rootConfig) {
+        return Path.of(userHome(), CONFIG, EQUO, rootConfig);
     }
 
 }
