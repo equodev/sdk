@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class EquoApp {
     public static final String CHROMIUM_ARGS = "chromium.args";
-    public static final String NEW_TAB_URL_SWITCH = "new-tab-url";
-    public static final String APP_ID_SWITCH = "app-id";
+    public static final String NEW_TAB_URL_SWITCH = "--new-tab-url";
+    public static final String APP_ID_SWITCH = "--app-id";
     private static final String CLASSPATH_SCHEME = "classpath";
     private static final String CUSTOM_URL = "equo.app";
     private static final String CLASSPATH_URI = String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
@@ -41,12 +41,16 @@ public class EquoApp {
     }
 
     private void addChromiumArgs(String... values) {
-        StringBuilder chromium_args = new StringBuilder(System.getProperty(CHROMIUM_ARGS, ""));
-        for (String value : values) {
-            chromium_args.append(";").append(value);
+        String chromiumArgs = System.getProperty(CHROMIUM_ARGS, "");
+        StringBuilder builderChromiumArgs = new StringBuilder(chromiumArgs);
+        for (int i = 0; i < values.length; i++) {
+            var value = values[i];
+            if (i == 0 && !chromiumArgs.trim().isEmpty()) {
+                builderChromiumArgs.append(";");
+            }
+            builderChromiumArgs.append(value);
         }
-        System.out.println(chromium_args);
-        System.setProperty(CHROMIUM_ARGS, chromium_args.toString());
+        System.setProperty(CHROMIUM_ARGS, builderChromiumArgs.toString());
     }
 
     /**
