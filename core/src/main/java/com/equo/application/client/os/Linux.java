@@ -16,7 +16,7 @@ public class Linux implements CommonFolders {
 
     private String getCacheHome() {
         String cacheHome = System.getenv(XDG_CACHE_HOME);
-        if (cacheHome == null || cacheHome.trim().isEmpty()) {
+        if (cacheHome == null || cacheHome.isBlank()) {
             cacheHome = Path.of(userHome(), CACHE).toString();
         }
         return cacheHome;
@@ -24,7 +24,7 @@ public class Linux implements CommonFolders {
 
     private String getDataHome() {
         String dataHome = System.getenv(XDG_DATA_HOME);
-        if (dataHome == null || dataHome.trim().isEmpty()) {
+        if (dataHome == null || dataHome.isBlank()) {
             dataHome = Path.of(userHome(), LOCAL, SHARE).toString();
         }
         return dataHome;
@@ -32,7 +32,7 @@ public class Linux implements CommonFolders {
 
     private String getStateHome() {
         String stateHome = System.getenv(XDG_STATE_HOME);
-        if (stateHome == null || stateHome.trim().isEmpty()) {
+        if (stateHome == null || stateHome.isBlank()) {
             stateHome = Path.of(userHome(), LOCAL, STATE).toString();
         }
         return stateHome;

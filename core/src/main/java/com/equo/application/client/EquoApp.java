@@ -45,7 +45,7 @@ public class EquoApp {
         StringBuilder builderChromiumArgs = new StringBuilder(chromiumArgs);
         for (int i = 0; i < values.length; i++) {
             var value = values[i];
-            if (i == 0 && !chromiumArgs.trim().isEmpty()) {
+            if (i == 0 && !chromiumArgs.isBlank()) {
                 builderChromiumArgs.append(";");
             }
             builderChromiumArgs.append(value);
@@ -147,9 +147,9 @@ public class EquoApp {
      * @param filename Represents the name of the file to be launched.
      */
     public void launch(String filename) {
-        String uri = filename;
-        if (uri == null || uri.isEmpty()) {
-            uri = CLASSPATH_URI + "index.html";
+        String uri = CLASSPATH_URI + "index.html";
+        if (filename != null && !filename.isBlank()) {
+            uri = CLASSPATH_URI + filename;
         }
 
         middlewareService.addResourceHandler(CLASSPATH_SCHEME, CUSTOM_URL, (request, headers) -> {

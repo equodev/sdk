@@ -11,7 +11,7 @@ public class Windows implements CommonFolders {
 
     private String localAppData() {
         String localAppData = System.getenv(LOCALAPPDATA);
-        if (localAppData == null || localAppData.trim().isEmpty()) {
+        if (localAppData == null || localAppData.isBlank()) {
             localAppData = Path.of(userHome(), APPDATA, LOCAL).toString();
         }
         return localAppData;
