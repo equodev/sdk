@@ -1,5 +1,6 @@
 package com.equo.application.client;
 
+import com.equo.application.client.exceptions.AppNameNotSpecifiedException;
 import com.equo.chromium.ChromiumBrowser;
 import com.equo.middleware.api.IMiddlewareService;
 import org.apache.felix.atomos.Atomos;
@@ -22,25 +23,39 @@ public class EquoApp {
     private static final String CUSTOM_URL = "equo.app";
     private static final String CLASSPATH_URI = String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
     private static final String RESOURCE_NOT_FOUND_MSG = "Resource not found: ";
-    private final IMiddlewareService middlewareService;
+    private static String APP_ID = null;
+    private final IMiddlewareService middlewareService = IMiddlewareService.findServiceReference();
 
-    private EquoApp(String appId) {
-        setAppId(appId);
-        middlewareService = IMiddlewareService.findServiceReference();
+    private EquoApp(String appName) {
+        setAppName(appName);
+        checkAppId();
+    }
+
+    private EquoApp() {
+        checkAppId();
     }
 
     /**
-     * Creates and returns a new instance of the EquoApp class with the specified appId.
+     * Creates and returns a new instance of the EquoApp class with the specified appName.
      *
-     * @param appId Represents the unique identifier for the EquoApp.
+     * @param appName Represents the unique identifier for the EquoApp.
      *
-     * @return An instance of the EquoApp class with the specified appId.
+     * @return An instance of the EquoApp class with the specified appName.
      */
-    public static EquoApp create(String appId) {
-        return new EquoApp(appId);
+    public static EquoApp create(String appName) {
+        return new EquoApp(appName);
     }
 
-    private void addChromiumArgs(String... values) {
+    /**
+     * Creates and returns a new instance of the EquoApp class.
+     *
+     * @return An instance of the EquoApp class.
+     */
+    public static EquoApp create() {
+        return new EquoApp();
+    }
+
+    private static void addChromiumArgs(String... values) {
         String chromiumArgs = System.getProperty(CHROMIUM_ARGS, "");
         StringBuilder builderChromiumArgs = new StringBuilder(chromiumArgs);
         for (int i = 0; i < values.length; i++) {
@@ -68,12 +83,40 @@ public class EquoApp {
     }
 
     /**
-     * Sets the app ID.
+     * Sets the app name.
      *
-     * @param appID Represents the ID of the application.
+     * @param appName Represents the name of the application.
      */
-    private void setAppId(String appID) {
-        addChromiumArgs(APP_ID_SWITCH + "=" + appID);
+    public static void setAppName(String appName) {
+        var appId = appName.toLowerCase()
+                .replaceAll("[^a-z0-9 -]", "")
+                .replaceAll(" +", " ")
+                .trim()
+                .replaceAll(" ", "-");
+        if (!appId.isEmpty()) {
+            appId = appId.substring(0, Math.min(50, appId.length() - 1));
+            if (appId.charAt(appId.length() - 1) == '-') {
+                appId = appId.substring(0, appId.length() - 1);
+            }
+        }
+        APP_ID = appId;
+        addChromiumArgs(APP_ID_SWITCH + "=" + appId);
+    }
+
+    private static void checkAppId() {
+        if (APP_ID == null || APP_ID.isBlank()) {
+            throw new AppNameNotSpecifiedException();
+        }
+    }
+
+    /**
+     * Gets the app name.
+     *
+     * @return Gets the app name.
+     */
+    public static String getAppName() {
+        checkAppId();
+        return APP_ID;
     }
 
     private void _launch(String url) {

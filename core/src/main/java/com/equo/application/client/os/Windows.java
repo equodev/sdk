@@ -1,8 +1,10 @@
 package com.equo.application.client.os;
 
+import com.equo.application.client.EquoApp;
+
 import java.nio.file.Path;
 
-public class Windows implements CommonFolders {
+public class Windows extends CommonFolders {
 
     public static final String TEMP = "Temp";
     public static final String LOCALAPPDATA = "LOCALAPPDATA";
@@ -18,28 +20,28 @@ public class Windows implements CommonFolders {
     }
 
     @Override
-    public Path cacheDirHome(String rootConfig) {
-        return Path.of(localAppData(), rootConfig, Dir.CACHE.getDir());
+    public Path cacheDirHome() {
+        return Path.of(localAppData(), EquoApp.getAppName(), Dir.CACHE.getDir());
     }
 
     @Override
-    public Path dataDirHome(String rootConfig) {
-        return Path.of(localAppData(), rootConfig, Dir.DATA.getDir());
+    public Path dataDirHome() {
+        return Path.of(localAppData(), EquoApp.getAppName(), Dir.DATA.getDir());
     }
 
     @Override
-    public Path stateDirHome(String rootConfig) {
-        return Path.of(localAppData(), rootConfig, Dir.STATE.getDir());
+    public Path stateDirHome() {
+        return Path.of(localAppData(), EquoApp.getAppName(), Dir.STATE.getDir());
     }
 
     @Override
-    public Path runtimeDirHome(String rootConfig) {
-        return Path.of(localAppData(), TEMP, rootConfig);
+    public Path runtimeDirHome() {
+        return Path.of(localAppData(), TEMP, EquoApp.getAppName());
     }
 
     @Override
-    public Path configDir(String rootConfig) {
-        return Path.of(localAppData(), EQUO, Dir.CONFIG.getDir(), rootConfig);
+    public Path configDir() {
+        return Path.of(localAppData(), EQUO, Dir.CONFIG.getDir(), EquoApp.getAppName());
     }
 
 }
