@@ -1,8 +1,10 @@
 package com.equo.application.client.os;
 
+import com.equo.application.client.EquoApp;
+
 import java.nio.file.Path;
 
-public class Mac implements CommonFolders {
+public class Mac extends CommonFolders {
 
     public static final String LIBRARY = "Library";
     public static final String CACHES = "Caches";
@@ -22,28 +24,28 @@ public class Mac implements CommonFolders {
     }
 
     @Override
-    public Path cacheDirHome(String rootConfig) {
-        return Path.of(getCachePath(), rootConfig, Dir.CACHE.getDir());
+    public Path cacheDirHome() {
+        return Path.of(getCachePath(), EquoApp.getAppName(), Dir.CACHE.getDir());
     }
 
     @Override
-    public Path dataDirHome(String rootConfig) {
-        return Path.of(getAppSupportPath(), rootConfig, Dir.DATA.getDir());
+    public Path dataDirHome() {
+        return Path.of(getAppSupportPath(), EquoApp.getAppName(), Dir.DATA.getDir());
     }
 
     @Override
-    public Path stateDirHome(String rootConfig) {
-        return Path.of(getAppSupportPath(), rootConfig, Dir.STATE.getDir());
+    public Path stateDirHome() {
+        return Path.of(getAppSupportPath(), EquoApp.getAppName(), Dir.STATE.getDir());
     }
 
     @Override
-    public Path runtimeDirHome(String rootConfig) {
-        return Path.of(TEMP, rootConfig);
+    public Path runtimeDirHome() {
+        return Path.of(TEMP, EquoApp.getAppName());
     }
 
     @Override
-    public Path configDir(String rootConfig) {
-        return Path.of(getAppSupportPath(), EQUO, Dir.CONFIG.getDir(), rootConfig);
+    public Path configDir() {
+        return Path.of(getAppSupportPath(), EQUO, Dir.CONFIG.getDir(), EquoApp.getAppName());
     }
 
 }

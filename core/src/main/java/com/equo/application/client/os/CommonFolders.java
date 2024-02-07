@@ -2,10 +2,11 @@ package com.equo.application.client.os;
 
 import java.nio.file.Path;
 
-public interface CommonFolders {
-    String EQUO = "equo";
+public abstract class CommonFolders {
+    public static final String EQUO = "equo";
+    private static CommonFolders instance = null;
 
-    enum Dir {
+    public enum Dir {
         CACHE("Cache"),
         CONFIG("Config"),
         DATA("Data"),
@@ -33,54 +34,44 @@ public interface CommonFolders {
      *
      * @return The value of the system property "user.home", which represents the user's home directory.
      */
-    default String userHome() {
+    protected String userHome() {
         return System.getProperty("user.home");
     }
 
     /**
      * Returns the path of the cache directory based on the rootConfig.
      *
-     * @param rootConfig The rootConfig directory where the cache app directory will be created.
-     *
      * @return The path of the cache directory based on the rootConfig.
      */
-    Path cacheDirHome(String rootConfig);
+    public abstract Path cacheDirHome();
 
     /**
      * Returns the path of the data directory based on the rootConfig.
      *
-     * @param rootConfig The rootConfig directory where the data app directory will be created.
-     *
      * @return The path of the data directory based on the rootConfig.
      */
-    Path dataDirHome(String rootConfig);
+    public abstract Path dataDirHome();
 
     /**
      * Returns the path of the state directory based on the rootConfig.
      *
-     * @param rootConfig The rootConfig directory where the state app directory will be created.
-     *
      * @return The path of the state directory based on the rootConfig.
      */
-    Path stateDirHome(String rootConfig);
+    public abstract Path stateDirHome();
 
     /**
      * Returns the path of the runtime directory based on the rootConfig.
      *
-     * @param rootConfig The rootConfig directory where the runtime app directory will be created.
-     *
      * @return The path of the runtime directory based on the rootConfig.
      */
-    Path runtimeDirHome(String rootConfig);
+    public abstract Path runtimeDirHome();
 
     /**
      * Returns the path of the config directory based on the rootConfig.
      *
-     * @param rootConfig The rootConfig directory where the config app directory will be created.
-     *
      * @return The path of the config directory based on the rootConfig.
      */
-    Path configDir(String rootConfig);
+    public abstract Path configDir();
 
     /**
      * Returns an instance of a class based on the operating system being used.
@@ -89,14 +80,17 @@ public interface CommonFolders {
      * it's Windows, it returns an instance of the `Windows` class; if it's Macintosh, it returns an instance of the
      * `Mac` class. Otherwise, it returns an instance of the `Linux` class.
      */
-    static CommonFolders getInstance() {
-        if (OS.isWindows()) {
-            return new Windows();
-        } else if (OS.isMacintosh()) {
-            return new Mac();
-        } else {
-            return new Linux();
+    public static CommonFolders getInstance() {
+        if (instance == null) {
+            if (OS.isWindows()) {
+                instance = new Windows();
+            } else if (OS.isMacintosh()) {
+                instance = new Mac();
+            } else {
+                instance = new Linux();
+            }
         }
+        return instance;
     }
 
 }

@@ -1,8 +1,10 @@
 package com.equo.application.client.os;
 
+import com.equo.application.client.EquoApp;
+
 import java.nio.file.Path;
 
-public class Linux implements CommonFolders {
+public class Linux extends CommonFolders {
     public static final String CACHE = ".cache";
     public static final String CONFIG = ".config";
     public static final String LOCAL = ".local";
@@ -39,28 +41,28 @@ public class Linux implements CommonFolders {
     }
 
     @Override
-    public Path cacheDirHome(String rootConfig) {
-        return Path.of(getCacheHome(), rootConfig);
+    public Path cacheDirHome() {
+        return Path.of(getCacheHome(), EquoApp.getAppName());
     }
 
     @Override
-    public Path dataDirHome(String rootConfig) {
-        return Path.of(getDataHome(), rootConfig);
+    public Path dataDirHome() {
+        return Path.of(getDataHome(), EquoApp.getAppName());
     }
 
     @Override
-    public Path stateDirHome(String rootConfig) {
-        return Path.of(getStateHome(), rootConfig);
+    public Path stateDirHome() {
+        return Path.of(getStateHome(), EquoApp.getAppName());
     }
 
     @Override
-    public Path runtimeDirHome(String rootConfig) {
-        return Path.of(RUN, rootConfig);
+    public Path runtimeDirHome() {
+        return Path.of(RUN, EquoApp.getAppName());
     }
 
     @Override
-    public Path configDir(String rootConfig) {
-        return Path.of(userHome(), CONFIG, EQUO, rootConfig);
+    public Path configDir() {
+        return Path.of(userHome(), CONFIG, EQUO, EquoApp.getAppName());
     }
 
 }
