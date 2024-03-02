@@ -16,43 +16,43 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 
 public class LinuxTest {
-    private static final String APP_ID = "APP-ID";
-    private Linux linux;
+  private static final String APP_ID = "APP-ID";
+  private Linux linux;
 
-    @BeforeEach
-    public void beforeEach() throws NoSuchFieldException, IllegalAccessException {
-        Field appId = EquoApp.class.getDeclaredField("APP_ID");
-        appId.setAccessible(true);
-        appId.set(null, APP_ID);
-        linux = spy(Linux.class);
-    }
+  @BeforeEach
+  public void beforeEach() throws NoSuchFieldException, IllegalAccessException {
+    Field appId = EquoApp.class.getDeclaredField("APP_ID");
+    appId.setAccessible(true);
+    appId.set(null, APP_ID);
+    linux = spy(Linux.class);
+  }
 
-    @Test
-    public void testCacheDirHome() {
-        var expected = Path.of(CACHE, APP_ID).toString();
-        var result = linux.cacheDirHome().toString();
-        assertTrue(result.contains(expected));
-    }
+  @Test
+  public void testCacheDirHome() {
+    var expected = Path.of(CACHE, APP_ID).toString();
+    var result = linux.cacheDirHome().toString();
+    assertTrue(result.contains(expected));
+  }
 
-    @Test
-    public void testDataDirHome() {
-        var expected = Path.of(LOCAL, SHARE, APP_ID).toString();
-        var result = linux.dataDirHome().toString();
-        assertTrue(result.contains(expected));
-    }
+  @Test
+  public void testDataDirHome() {
+    var expected = Path.of(LOCAL, SHARE, APP_ID).toString();
+    var result = linux.dataDirHome().toString();
+    assertTrue(result.contains(expected));
+  }
 
-    @Test
-    public void testStateDirHome() {
-        var expected = Path.of(LOCAL, STATE, APP_ID).toString();
-        var result = linux.stateDirHome().toString();
-        assertTrue(result.contains(expected));
-    }
+  @Test
+  public void testStateDirHome() {
+    var expected = Path.of(LOCAL, STATE, APP_ID).toString();
+    var result = linux.stateDirHome().toString();
+    assertTrue(result.contains(expected));
+  }
 
-    @Test
-    public void testRuntimeDirHome() {
-        var expected = Path.of(RUN, APP_ID).toString();
-        var result = linux.runtimeDirHome().toString();
-        assertTrue(result.contains(expected));
-    }
+  @Test
+  public void testRuntimeDirHome() {
+    var expected = Path.of(RUN, APP_ID).toString();
+    var result = linux.runtimeDirHome().toString();
+    assertTrue(result.contains(expected));
+  }
 
 }

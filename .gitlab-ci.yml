@@ -1,0 +1,153 @@
+stages:
+  - build
+  - test
+  - pre-report
+  - report
+  - pre-release
+  - release
+
+variables:
+  gradle_opt: "--build-cache --no-daemon"
+  Tag: latest
+
+build.image:
+  image: docker:25.0.3-alpine3.19
+  services:
+    - docker:25.0.3-dind-alpine3.19
+  variables:
+    Dockerfile: docker/Dockerfile
+  rules:
+     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH
+       changes:
+         - $Dockerfile
+         - .gitlab-ci.yml
+  stage: .pre
+  before_script:
+    - until docker info &> /dev/null; do sleep 1; done
+    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" $CI_REGISTRY
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$Tag || true
+    - docker build --tag $CI_REGISTRY_IMAGE:$Tag --file $Dockerfile .
+    - docker push "$CI_REGISTRY_IMAGE:$Tag"
+
+.artifacts_paths:
+  artifacts:
+    paths:
+      - build/reports
+      - core/build/jacoco/test.exec
+    expire_in: 12w
+
+.gcloud-auth: &gcloud-auth
+  - echo ${service_account} | base64 -d > credentials.json
+  - gcloud auth activate-service-account --key-file credentials.json
+
+.getMajor: &getMajor
+  - export MAJOR=$(./gradlew -q getMajor)
+
+image: $CI_REGISTRY_IMAGE:$Tag
+
+build:
+  stage: build
+  script:
+    - ./gradlew assemble
+
+publish.javadoc.jar:
+  stage: build
+  before_script:
+    - *gcloud-auth
+  script:
+    - ./gradlew javadocJar
+    - *getMajor
+    - gsutil cp -a public-read core/build/libs/core-*-javadoc.jar gs://$GCS_BUCKET/$MAJOR
+
+test:
+  extends:
+    - .artifacts_paths
+  needs:
+    - build
+  stage: test
+  artifacts:
+    reports:
+      junit:
+        - "core/build/test-results/test/TEST-*.xml"
+  before_script:
+    - if [ "$SKIP_TESTS" == "true" ]; then exit 0; fi
+  script:
+    - ./gradlew $gradle_opt test
+
+checkstyle:
+  stage: test
+  needs:
+    - build
+  script:
+    - ./gradlew $gradle_opt checkstyleMain
+
+generate.coverage.report:
+  extends:
+    - .artifacts_paths
+  stage: pre-report
+  needs:
+    - build
+    - test
+  allow_failure: true
+  environment:
+    name: coverage
+    url: https://$CI_PROJECT_ROOT_NAMESPACE.$CI_PAGES_DOMAIN/-/equo/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/build/reports/jacoco/jacocoRootReport/html/index.html
+  script:
+    - ./gradlew $gradle_opt jacocoRootReport
+
+report:
+  stage: report
+  needs:
+    - generate.coverage.report
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: cobertura.xml
+    expire_in: 6w
+  allow_failure: true
+  coverage: '/\d+\.\d+ % covered/'
+  script:
+    - jacoco_paths=`find * -path "**/src/main/java" -type d | sed -e 's@^@'"$CI_PROJECT_DIR"'/@'`
+    - python /opt/cover2cover.py build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml $jacoco_paths > cobertura.xml
+  after_script:
+    - ./gradlew print-coverage
+
+changelog:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "develop"'
+      when: always
+    - when: never
+  stage: pre-release
+  needs:
+    - test
+  artifacts:
+    reports:
+      dotenv: changelog-var.env
+    paths:
+      - changelog.md
+  cache: {}
+  before_script:
+    - if [ "$PUBLISH_CHANGELOG" == "false" ]; then exit 0; fi
+    - *gcloud-auth
+  script:
+    - ./gradlew changelog
+    - *getMajor
+    - gsutil -h "Cache-Control":" private" -h "Content-Type":" text/plain" cp -a public-read changelog.md gs://$GCS_BUCKET/$MAJOR/
+    - |
+      echo '[{"method": ["GET"], "origin": ["*"]}]' > cors.json
+    - gsutil cors set cors.json gs://$GCS_BUCKET
+
+release:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+    - when: never
+  stage: release
+  needs:
+    - build
+    - test
+    - changelog
+  script:
+    - ./gradlew publish closeAndReleaseStagingRepository
