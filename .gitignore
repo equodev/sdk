@@ -19,3 +19,12 @@ gradle-app.setting
 
 .vscode/
 .idea/
+
+.env.local
+docker-compose.yml
+*.env
+.run/
+cors.json
+MAJOR
+.chlog/
+changelog.md
