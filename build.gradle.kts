@@ -118,7 +118,15 @@ fun Properties.toStringWithoutComments(): String {
 val projectVersion = "${properties["project_version"]}"
 val gobin: String = System.getenv("GOBIN") ?: "/go/bin"
 val userHome: String? = System.getProperty("user.home")
-val GCS_BUCKET_PROVIDER = providers.environmentVariable("GCS_BUCKET")
+
+fun getenv(envVariable: String): String {
+    val provider = providers.environmentVariable(envVariable)
+    if (!provider.isPresent) {
+        Logger.error("$envVariable is not present!")
+        exitProcess(1)
+    }
+    return provider.get()
+}
 
 object Logger {
     private const val ANSI_ESCAPE = "\u001b"
@@ -140,10 +148,6 @@ object Logger {
 
     fun error(text: String) {
         this.print("[ERROR] $text", 31, 1)
-    }
-
-    fun notPresent(text: String) {
-        this.error("$text is not present!")
     }
 }
 
@@ -289,13 +293,13 @@ tasks.register("print-coverage") {
 
 fun gitChglog(configPath: String): String {
     val tagPattern = "v"
-    val ciProjectURL = System.getenv("CI_PROJECT_URL")
+    val CI_PROJECT_URL = getenv("CI_PROJECT_URL")
 
     return ("$gobin/git-chglog " +
             "-c .$configPath/config.yml " +
             "-t .$configPath/CHANGELOG.tpl.md " +
             "--tag-filter-pattern \"^${tagPattern}\" " +
-            "--repository-url $ciProjectURL " +
+            "--repository-url $CI_PROJECT_URL " +
             "--no-case " +
             "--next-tag $tagPattern$projectVersion $tagPattern$projectVersion")
             .runCommand() ?: ""
@@ -317,11 +321,7 @@ fun appendChangelogEnvFile(major: String) {
 }
 
 tasks.register("changelog") {
-    if (!GCS_BUCKET_PROVIDER.isPresent) {
-        Logger.notPresent("GCS_BUCKET")
-        exitProcess(1)
-    }
-    val GCS_BUCKET = GCS_BUCKET_PROVIDER.get()
+    val GCS_BUCKET = getenv("GCS_BUCKET")
     val GCS_CI_FILES = "equo-ci-files"
     val CHGLOG_CONFIG = "conf-gitlab-1"
     val configPath = "chglog/$CHGLOG_CONFIG"
