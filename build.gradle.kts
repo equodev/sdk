@@ -1,4 +1,5 @@
 import java.util.*
+import kotlin.system.exitProcess
 
 plugins {
     java
@@ -115,9 +116,9 @@ fun Properties.toStringWithoutComments(): String {
 }
 
 val projectVersion = "${properties["project_version"]}"
-val gobin: String? = System.getenv("GOBIN")
+val gobin: String = System.getenv("GOBIN") ?: "/go/bin"
 val userHome: String? = System.getProperty("user.home")
-val GCS_BUCKET: String = System.getenv("GCS_BUCKET") ?: ""
+val GCS_BUCKET_PROVIDER = providers.environmentVariable("GCS_BUCKET")
 
 object Logger {
     private const val ANSI_ESCAPE = "\u001b"
@@ -135,6 +136,14 @@ object Logger {
 
     fun code(text: String) {
         this.print("$ $text", 32, 1)
+    }
+
+    fun error(text: String) {
+        this.print("[ERROR] $text", 31, 1)
+    }
+
+    fun notPresent(text: String) {
+        this.error("$text is not present!")
     }
 }
 
@@ -235,8 +244,10 @@ fun writeNewFile(filename: String, content: String) {
         file.createNewFile()
     }
     file.writeBytes(content.toByteArray())
-    Logger.info("File $filename created successfully!")
-    Logger.info("File content: $content")
+    Logger.info("File «$filename» created successfully!")
+    Logger.info("### BEGIN Content ###")
+    Logger.info(content)
+    Logger.info("### END Content ###")
 }
 
 fun mkdir(folder: String) {
@@ -306,6 +317,11 @@ fun appendChangelogEnvFile(major: String) {
 }
 
 tasks.register("changelog") {
+    if (!GCS_BUCKET_PROVIDER.isPresent) {
+        Logger.notPresent("GCS_BUCKET")
+        exitProcess(1)
+    }
+    val GCS_BUCKET = GCS_BUCKET_PROVIDER.get()
     val GCS_CI_FILES = "equo-ci-files"
     val CHGLOG_CONFIG = "conf-gitlab-1"
     val configPath = "chglog/$CHGLOG_CONFIG"
