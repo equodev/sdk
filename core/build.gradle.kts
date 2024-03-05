@@ -141,7 +141,7 @@ tasks.jar {
         attributes["Manifest-Version"] = "${project.version}"
         attributes["Implementation-Title"] = "$group.${rootProject.name}"
         attributes["Implementation-Version"] = "${project.version}"
-        attributes["Implementation-Vendor"] = "equo"
+        attributes["Implementation-Vendor"] = "Equo"
         attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
         attributes["Build-Timestamp"] = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
                 .format(Date())

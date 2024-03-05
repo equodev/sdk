@@ -20,7 +20,6 @@ build.image:
      - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH
        changes:
          - $Dockerfile
-         - .gitlab-ci.yml
   stage: .pre
   before_script:
     - until docker info &> /dev/null; do sleep 1; done
