@@ -1,3 +1,6 @@
+import com.equo.env.getenvOrDefault
+import com.equo.file.writeNewFile
+import com.equo.logger.Logger
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -111,8 +114,8 @@ tasks.withType<Sign>().configureEach {
     }
 }
 
-fun decodeBase64(key: String): String {
-    return String(Base64.getDecoder().decode(key))
+fun decodeBase64(content: String): ByteArray {
+    return Base64.getDecoder().decode(content)
 }
 
 signing {
@@ -125,7 +128,7 @@ signing {
             .environmentVariable("GPG_SIGNING_PASSPHRASE")
     if (signingKeyInBase64Provider.isPresent && signingPassphrase.isPresent) {
         val signingKeyInBase64 = signingKeyInBase64Provider.get()
-        val signingKey = decodeBase64(signingKeyInBase64)
+        val signingKey = String(decodeBase64(signingKeyInBase64))
         useInMemoryPgpKeys(signingKey, signingPassphrase.get())
         sign(publishing.publications[rootProject.name])
     }
@@ -153,16 +156,19 @@ tasks.jar {
     }
 
     doLast {
-        val pkAlias = project.property("EquoSDKKeyAlias")
-        val keystoreFileName = project.property("EquoSDKStoreFilePath")
-        val storePassword = project.property("EquoSDKStorePassword")
-        val keyPassword = project.property("EquoSDKKeyPassword")
-        val keystoreType = project.property("EquoSDKStoreType")
+        val pkAlias = getenvOrDefault("EquoSDKKeyAlias")
+        val keystoreFileContentBase64 = getenvOrDefault("EquoSDKStoreFileContent")
+        val keystoreFileContent = decodeBase64(keystoreFileContentBase64)
+        val keystoreFileName = "key_store.p12"
+        val keystoreFile = writeNewFile(project, keystoreFileName, keystoreFileContent, false)
+        val storePassword = getenvOrDefault("EquoSDKStorePassword")
+        val keyPassword = getenvOrDefault("EquoSDKKeyPassword")
+        val keystoreType = getenvOrDefault("EquoSDKStoreType")
 
         val buildDir = layout.buildDirectory.get()
         val libsDir = "$buildDir/libs"
 
-        File(libsDir).listFiles()
+        file(libsDir).listFiles()
                 ?.filter {
                     it.path.endsWith(".jar")
                 }
@@ -171,11 +177,11 @@ tasks.jar {
                         "signjar"(
                                 "jar" to it,
                                 "destDir" to libsDir,
-                                "alias" to "$pkAlias",
-                                "keystore" to "$keystoreFileName",
-                                "storepass" to "$storePassword",
-                                "keypass" to "$keyPassword",
-                                "storetype" to "$keystoreType",
+                                "alias" to pkAlias,
+                                "keystore" to keystoreFile.absolutePath,
+                                "storepass" to storePassword,
+                                "keypass" to keyPassword,
+                                "storetype" to keystoreType,
                                 "preservelastmodified" to "true"
                         )
                     }

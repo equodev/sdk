@@ -28,3 +28,4 @@ cors.json
 MAJOR
 .chlog/
 changelog.md
+*.p12
