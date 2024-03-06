@@ -115,7 +115,7 @@ report:
 
 changelog:
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop"'
       when: always
     - when: never
   stage: pre-release
@@ -140,7 +140,7 @@ changelog:
 
 release:
   rules:
-    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "main"
       when: manual
     - when: never
   stage: release
