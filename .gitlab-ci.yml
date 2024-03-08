@@ -123,16 +123,24 @@ changelog:
   needs:
     - test
   artifacts:
-    reports:
-      dotenv: changelog-var.env
     paths:
       - changelog.md
   cache: {}
+  variables:
+    CHGLOG_TARGET: .chglog
+    CONFIG_PATH: chglog/conf-gitlab-1
+    GCS_CI_FILES: equo-ci-files
+    CHANGELOG_FILENAME: changelog.md
+    TAG_PATTERN: v
   before_script:
     - if [ "$PUBLISH_CHANGELOG" == "false" ]; then exit 0; fi
     - *gcloud-auth
-  script:
     - if [ "$CI_COMMIT_BRANCH" == "develop" ]; then export MAJOR=develop; fi
+  script:
+    - mkdir -p $CHGLOG_TARGET
+    - gsutil cp -R gs://$GCS_CI_FILES/master/$CONFIG_PATH $CHGLOG_TARGET
+    - project_version=$(./gradlew -q getProjectVersion)
+    - git-chglog -c .$CONFIG_PATH/config.yml -t .$CONFIG_PATH/CHANGELOG.tpl.md --tag-filter-pattern "^${TAG_PATTERN}" --repository-url $CI_PROJECT_URL --no-case --next-tag $TAG_PATTERN$project_version $TAG_PATTERN$project_version > $CHANGELOG_FILENAME
     - ./gradlew changelog
     - *getMajor
     - gsutil -h "Cache-Control":" private" -h "Content-Type":" text/plain" cp -a public-read changelog.md gs://$GCS_BUCKET/core/$MAJOR/

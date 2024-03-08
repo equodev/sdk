@@ -1,8 +1,5 @@
-import com.equo.chglog.appendChangelogEnvFile
-import com.equo.chglog.copyConfigChangelog
 import com.equo.env.getenvOrDefault
 import com.equo.file.writeNewFile
-import com.equo.chglog.gitChglog
 import com.equo.gsutil.GSUtil
 import com.equo.logger.Logger
 import com.equo.version.Version
@@ -143,21 +140,15 @@ tasks.register("print-coverage") {
 
 tasks.register("changelog") {
     val GCS_BUCKET = getenvOrDefault("GCS_BUCKET")
-    val GCS_CI_FILES = "equo-ci-files"
-    val CHGLOG_CONFIG = "conf-gitlab-1"
-    val configPath = "chglog/$CHGLOG_CONFIG"
-
-    copyConfigChangelog(project, GCS_CI_FILES, configPath)
-
-    val major = version.getMajor()
-    appendChangelogEnvFile(project, major)
-
     val changelogFilename = "changelog.md"
-    val changelog = gitChglog(configPath, projectVersion) +
-            GSUtil().cat("$GCS_BUCKET/core/$major/$changelogFilename")
+    val changelog = file(changelogFilename).readText() +
+            GSUtil().cat("$GCS_BUCKET/core/${version.getMajor()}/$changelogFilename")
 
     writeNewFile(project, changelogFilename, changelog.toByteArray())
-    Logger.info(changelog)
+}
+
+tasks.register("getProjectVersion") {
+    println(projectVersion)
 }
 
 tasks.register("getMajor") {
