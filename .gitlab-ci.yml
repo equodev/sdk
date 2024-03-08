@@ -56,8 +56,9 @@ publish.javadoc.jar:
     - *gcloud-auth
   script:
     - ./gradlew javadocJar
+    - mv core/build/libs/core-*-javadoc.jar core/build/libs/javadoc.jar
     - *getMajor
-    - gsutil cp -a public-read core/build/libs/core-*-javadoc.jar gs://$GCS_BUCKET/$MAJOR
+    - gsutil cp -a public-read core/build/libs/javadoc.jar gs://$GCS_BUCKET/core
 
 test:
   extends:
@@ -131,9 +132,10 @@ changelog:
     - if [ "$PUBLISH_CHANGELOG" == "false" ]; then exit 0; fi
     - *gcloud-auth
   script:
+    - if [ "$CI_COMMIT_BRANCH" == "develop" ]; then export MAJOR=develop; fi
     - ./gradlew changelog
     - *getMajor
-    - gsutil -h "Cache-Control":" private" -h "Content-Type":" text/plain" cp -a public-read changelog.md gs://$GCS_BUCKET/$MAJOR/
+    - gsutil -h "Cache-Control":" private" -h "Content-Type":" text/plain" cp -a public-read changelog.md gs://$GCS_BUCKET/core/$MAJOR/
     - |
       echo '[{"method": ["GET"], "origin": ["*"]}]' > cors.json
     - gsutil cors set cors.json gs://$GCS_BUCKET

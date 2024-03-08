@@ -154,7 +154,7 @@ tasks.register("changelog") {
 
     val changelogFilename = "changelog.md"
     val changelog = gitChglog(configPath, projectVersion) +
-            GSUtil().cat("$GCS_BUCKET/$major/$changelogFilename")
+            GSUtil().cat("$GCS_BUCKET/core/$major/$changelogFilename")
 
     writeNewFile(project, changelogFilename, changelog.toByteArray())
     Logger.info(changelog)
