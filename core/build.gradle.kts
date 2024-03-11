@@ -1,6 +1,5 @@
 import com.equo.env.getenvOrDefault
 import com.equo.file.writeNewFile
-import com.equo.logger.Logger
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,7 +22,8 @@ repositories {
 }
 
 version = "${properties["project_version"]}"
-val isReleaseVersion = !"$version".endsWith("SNAPSHOT")
+val isSnapshotVersion = "$version".endsWith("SNAPSHOT")
+val isReleaseVersion = !isSnapshotVersion
 
 fun getCommitBranch() = System.getenv("CI_COMMIT_BRANCH") ?: ""
 
@@ -137,9 +137,11 @@ signing {
 tasks.jar {
     dependsOn("javadocJar", "sourcesJar")
     onlyIf {
-        isReleaseBranch() || isDevelopBranch()
+        isReleaseBranch() || isDevelopBranch() || isSnapshotVersion
     }
     manifest {
+        if (isSnapshotVersion) return@manifest
+
         attributes["Name"] = project.name
         attributes["Manifest-Version"] = "${project.version}"
         attributes["Implementation-Title"] = "$group.${rootProject.name}"
@@ -156,6 +158,8 @@ tasks.jar {
     }
 
     doLast {
+        if (isSnapshotVersion) return@doLast
+
         val pkAlias = getenvOrDefault("EquoSDKKeyAlias")
         val keystoreFileContentBase64 = getenvOrDefault("EquoSDKStoreFileContent")
         val keystoreFileContent = decodeBase64(keystoreFileContentBase64)
