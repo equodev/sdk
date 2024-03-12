@@ -197,9 +197,9 @@ public class EquoApp {
       launch_(uri);
       return;
     }
-    String filename_uri = CLASSPATH_URI + "index.html";
+    String filenameUri = CLASSPATH_URI + "index.html";
     if (uri != null && !uri.isBlank()) {
-      filename_uri = CLASSPATH_URI + uri;
+      filenameUri = CLASSPATH_URI + uri;
     }
 
     middlewareService.addResourceHandler(CLASSPATH_SCHEME, CUSTOM_URL, (request, headers) -> {
@@ -213,7 +213,7 @@ public class EquoApp {
       }
     });
 
-    launch_(filename_uri);
+    launch_(filenameUri);
   }
 
   /**
