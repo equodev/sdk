@@ -195,25 +195,25 @@ public class EquoApp {
   public void launch(String uri) {
     if (uri.toLowerCase().startsWith("http")) {
       launch_(uri);
-    } else {
-      String filename_uri = CLASSPATH_URI + "index.html";
-      if (uri != null && !uri.isBlank()) {
-        filename_uri = CLASSPATH_URI + uri;
-      }
-
-      middlewareService.addResourceHandler(CLASSPATH_SCHEME, CUSTOM_URL, (request, headers) -> {
-        String resourceToFind = request.getUrl().substring(CLASSPATH_URI.length());
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceToFind);
-        if (inputStream != null) {
-          return inputStream;
-        } else {
-          System.err.println(RESOURCE_NOT_FOUND_MSG + resourceToFind);
-          return null;
-        }
-      });
-
-      launch_(filename_uri);
+      return;
     }
+    String filename_uri = CLASSPATH_URI + "index.html";
+    if (uri != null && !uri.isBlank()) {
+      filename_uri = CLASSPATH_URI + uri;
+    }
+
+    middlewareService.addResourceHandler(CLASSPATH_SCHEME, CUSTOM_URL, (request, headers) -> {
+      String resourceToFind = request.getUrl().substring(CLASSPATH_URI.length());
+      InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceToFind);
+      if (inputStream != null) {
+        return inputStream;
+      } else {
+        System.err.println(RESOURCE_NOT_FOUND_MSG + resourceToFind);
+        return null;
+      }
+    });
+
+    launch_(filename_uri);
   }
 
   /**
