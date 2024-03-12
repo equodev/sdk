@@ -178,7 +178,7 @@ public class EquoApp {
 
   /**
    * Enable the browser UI in an EquoApp.
-   * 
+   *
    * @return The method is returning an instance of the EquoApp class.
    */
   public EquoApp withBrowserUI() {
@@ -187,34 +187,37 @@ public class EquoApp {
   }
 
   /**
-   * Sets up a resource handler for a given filename and launches the application.
-   * By default, try
-   * to load the index.html
-   * 
-   * @param filename Represents the name of the file to be launched.
+   * Launches the application with the given URI.
+   *
+   * @param uri Represents either the name of the file to be launched or a URL based on HTTP/HTTPS, this protocol is
+   *            mandatory for URLs.
    */
-  public void launch(String filename) {
-    String uri = CLASSPATH_URI + "index.html";
-    if (filename != null && !filename.isBlank()) {
-      uri = CLASSPATH_URI + filename;
-    }
-
-    middlewareService.addResourceHandler(CLASSPATH_SCHEME, CUSTOM_URL, (request, headers) -> {
-      String resourceToFind = request.getUrl().substring(CLASSPATH_URI.length());
-      InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceToFind);
-      if (inputStream != null) {
-        return inputStream;
-      } else {
-        System.err.println(RESOURCE_NOT_FOUND_MSG + resourceToFind);
-        return null;
+  public void launch(String uri) {
+    if (uri.toLowerCase().startsWith("http")) {
+      launch_(uri);
+    } else {
+      String filename_uri = CLASSPATH_URI + "index.html";
+      if (uri != null && !uri.isBlank()) {
+        filename_uri = CLASSPATH_URI + uri;
       }
-    });
 
-    launch_(uri);
+      middlewareService.addResourceHandler(CLASSPATH_SCHEME, CUSTOM_URL, (request, headers) -> {
+        String resourceToFind = request.getUrl().substring(CLASSPATH_URI.length());
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceToFind);
+        if (inputStream != null) {
+          return inputStream;
+        } else {
+          System.err.println(RESOURCE_NOT_FOUND_MSG + resourceToFind);
+          return null;
+        }
+      });
+
+      launch_(filename_uri);
+    }
   }
 
   /**
-   * Launches the application with specified url.
+   * Launches the application with specified URL.
    * 
    * @param url Represents the URL that needs to be launched.
    */
