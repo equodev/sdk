@@ -187,16 +187,20 @@ public class EquoApp {
   }
 
   /**
-   * Sets up a resource handler for a given filename and launches the application.
-   * By default, try
-   * to load the index.html
+   * Launches the application with the given URI.
    * 
-   * @param filename Represents the name of the file to be launched.
+   * @param uri Represents either the name of the file to be launched
+   *            or a URL based on HTTP/HTTPS, this protocol is 
+   *            mandatory for URLs.
    */
-  public void launch(String filename) {
-    String uri = CLASSPATH_URI + "index.html";
-    if (filename != null && !filename.isBlank()) {
-      uri = CLASSPATH_URI + filename;
+  public void launch(String uri) {
+    if (uri.toLowerCase().startsWith("http")) {
+      launch_(uri);
+      return;
+    }
+    String filenameUri = CLASSPATH_URI + "index.html";
+    if (uri != null && !uri.isBlank()) {
+      filenameUri = CLASSPATH_URI + uri;
     }
 
     middlewareService.addResourceHandler(CLASSPATH_SCHEME, CUSTOM_URL, (request, headers) -> {
@@ -210,11 +214,11 @@ public class EquoApp {
       }
     });
 
-    launch_(uri);
+    launch_(filenameUri);
   }
 
   /**
-   * Launches the application with specified url.
+   * Launches the application with specified URL.
    * 
    * @param url Represents the URL that needs to be launched.
    */
