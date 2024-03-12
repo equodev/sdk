@@ -178,7 +178,7 @@ public class EquoApp {
 
   /**
    * Enable the browser UI in an EquoApp.
-   *
+   * 
    * @return The method is returning an instance of the EquoApp class.
    */
   public EquoApp withBrowserUI() {
@@ -188,7 +188,7 @@ public class EquoApp {
 
   /**
    * Launches the application with the given URI.
-   *
+   * 
    * @param uri Represents either the name of the file to be launched or a URL based on HTTP/HTTPS, this protocol is
    *            mandatory for URLs.
    */
