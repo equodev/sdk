@@ -68,12 +68,6 @@ nexusPublishing {
     }
 }
 
-dependencies {
-    // https://mvnrepository.com/artifact/com.google.cloud/libraries-bom
-    implementation("com.google.cloud:libraries-bom:26.33.0")
-    implementation("com.google.cloud:google-cloud-storage")
-}
-
 // tasks to build jacoco report with results of all subprojects
 tasks.register<JacocoReport>("jacocoRootReport") {
     val jacocoReportTasks = subprojects.map { subproject ->
