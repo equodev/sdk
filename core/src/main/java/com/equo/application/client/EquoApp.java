@@ -189,7 +189,8 @@ public class EquoApp {
   /**
    * Launches the application with the given URI.
    * 
-   * @param uri Represents either the name of the file to be launched or a URL based on HTTP/HTTPS, this protocol is
+   * @param uri Represents either the name of the file to be launched
+   *            or a URL based on HTTP/HTTPS, this protocol is 
    *            mandatory for URLs.
    */
   public void launch(String uri) {
