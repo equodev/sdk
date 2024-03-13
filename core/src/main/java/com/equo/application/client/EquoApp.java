@@ -25,7 +25,7 @@ public class EquoApp {
   public static final String NEW_TAB_URL_SWITCH = "--new-tab-url";
   public static final String APP_ID_SWITCH = "--app-id";
   private static final String CLASSPATH_SCHEME = "equo";
-  private static String CUSTOM_URL = "equo.app";
+  private static String CUSTOM_URL = null;
   private static String CLASSPATH_URI =
       String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
   private static final String RESOURCE_NOT_FOUND_MSG = "Resource not found: ";
@@ -93,10 +93,10 @@ public class EquoApp {
    * @param appName Represents the name of the application.
    */
   public static void setAppName(String appName) {
-    var appId = appName.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
+    var appId = appName.toLowerCase().replaceAll("[^a-z0-9\\s-]", "").replaceAll(" +", " ").trim()
         .replaceAll(" ", "-");
     if (!appId.isEmpty()) {
-      appId = appId.substring(0, Math.min(50, appId.length() - 1));
+      appId = appId.substring(0, Math.min(50, appId.length()));
       if (appId.charAt(appId.length() - 1) == '-') {
         appId = appId.substring(0, appId.length() - 1);
       }
