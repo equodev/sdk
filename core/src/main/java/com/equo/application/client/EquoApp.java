@@ -93,8 +93,6 @@ public class EquoApp {
    * @param appName Represents the name of the application.
    */
   public static void setAppName(String appName) {
-    CUSTOM_URL = appName;
-    CLASSPATH_URI = String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
     var appId = appName.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
         .replaceAll(" ", "-");
     if (!appId.isEmpty()) {
@@ -103,6 +101,8 @@ public class EquoApp {
         appId = appId.substring(0, appId.length() - 1);
       }
     }
+    CUSTOM_URL = appName;
+    CLASSPATH_URI = String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
     APP_ID = appId;
     addChromiumArgs(APP_ID_SWITCH + "=" + appId);
   }
