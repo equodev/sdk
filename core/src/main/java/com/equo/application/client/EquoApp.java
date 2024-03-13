@@ -24,7 +24,7 @@ public class EquoApp {
   public static final String CHROMIUM_ARGS = "chromium.args";
   public static final String NEW_TAB_URL_SWITCH = "--new-tab-url";
   public static final String APP_ID_SWITCH = "--app-id";
-  private static final String CLASSPATH_SCHEME = "classpath";
+  private static final String CLASSPATH_SCHEME = "equo";
   private static final String CUSTOM_URL = "equo.app";
   private static final String CLASSPATH_URI =
       String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
