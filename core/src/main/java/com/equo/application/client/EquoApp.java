@@ -199,7 +199,7 @@ public class EquoApp {
       return;
     }
     String filenameUri = CLASSPATH_URI + "index.html";
-    if (uri != null && !uri.isBlank()) {
+    if (!uri.isBlank()) {
       filenameUri = CLASSPATH_URI + uri;
     }
 
