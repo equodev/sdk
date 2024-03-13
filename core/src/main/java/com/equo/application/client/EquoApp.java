@@ -101,9 +101,8 @@ public class EquoApp {
         appId = appId.substring(0, appId.length() - 1);
       }
     }
-    CUSTOM_URL = appName;
+    APP_ID = CUSTOM_URL = appId;
     CLASSPATH_URI = String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
-    APP_ID = appId;
     addChromiumArgs(APP_ID_SWITCH + "=" + appId);
   }
 
