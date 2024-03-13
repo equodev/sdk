@@ -127,19 +127,6 @@ public class EquoApp {
     System.exit(0);
   }
 
-  private Path getCacheLocation() {
-    // Comply with XDG
-    // (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
-    Path baseDir;
-    String cacheHome = System.getProperty("XDG_CACHE_HOME");
-    if (cacheHome != null) {
-      baseDir = Paths.get(cacheHome);
-    } else {
-      baseDir = Paths.get(System.getProperty("user.home"), ".cache");
-    }
-    return Paths.get(baseDir.toString(), "equo", "application");
-  }
-
   /**
    * Adds an OSGi compatibility layer to the EquoApp by starting Felix in a daemon
    * thread.
@@ -155,7 +142,7 @@ public class EquoApp {
       Atomos atomos = Atomos.newAtomos();
       Map<String, String> config = new HashMap<>();
       config.put("atomos.enable.resolution.errors", "true");
-      config.put(Constants.FRAMEWORK_STORAGE, getCacheLocation().toString());
+      config.put(Constants.FRAMEWORK_STORAGE, ConfigLocations.cacheHome().toString());
       Framework framework = atomos.newFramework(config);
       try {
         framework.init();
