@@ -26,8 +26,7 @@ public class EquoApp {
   public static final String APP_ID_SWITCH = "--app-id";
   private static final String CLASSPATH_SCHEME = "equo";
   private static String CUSTOM_URL = null;
-  private static String CLASSPATH_URI =
-      String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
+  private static String CLASSPATH_URI = null;
   private static final String RESOURCE_NOT_FOUND_MSG = "Resource not found: ";
   private static String APP_ID = null;
   private final IMiddlewareService middlewareService = IMiddlewareService.findServiceReference();
@@ -101,7 +100,8 @@ public class EquoApp {
         appId = appId.substring(0, appId.length() - 1);
       }
     }
-    APP_ID = CUSTOM_URL = appId;
+    APP_ID = appId;
+    CUSTOM_URL = APP_ID + ".app";
     CLASSPATH_URI = String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
     addChromiumArgs(APP_ID_SWITCH + "=" + appId);
   }
