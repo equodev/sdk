@@ -35,7 +35,7 @@ public class EquoAppTest {
     }
 
     @Test
-    public void setAppNameEndWithScoreTest() {
+    public void setAppNameEndWithDashTest() {
         testToSetAppName("simple-url-app test with spaces and end with scor-e in the last position",
                 "simple-url-app-test-with-spaces-and-end-with-scor");
         assertThat(EquoApp.getAppName().length()).isEqualTo(49);
@@ -54,13 +54,13 @@ public class EquoAppTest {
     }
 
     @Test
-    public void setAppNameStartingWith2ScoresTest() {
+    public void setAppNameStartingWith2DashesTest() {
         testToSetAppName("--MiApp", "miapp");
     }
 
     @Test
-    public void setAppNameStartsWithScore() {
-        testToSetAppName("-test score", "test-score");
+    public void setAppNameStartsWithDash() {
+        testToSetAppName("-test dash", "test-dash");
     }
 
     @Test
@@ -74,7 +74,7 @@ public class EquoAppTest {
     }
 
     @Test
-    public void createWithAScoreAsAnAppName() {
+    public void createWithADashAsAnAppName() {
         assertThatThrownBy(() -> EquoApp.create("-")).isInstanceOf(AppNameNotSpecifiedException.class);
     }
 }
