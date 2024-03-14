@@ -24,13 +24,13 @@ public class EquoAppTest {
     }
 
     @Test
-    public void setAppNameWithMoraThanOneSpaceTest() {
+    public void setAppNameWithMoreThanOneSpaceTest() {
         testToSetAppName("test with          more than one space",
                 "test-with-more-than-one-space");
     }
 
     @Test
-    public void setAppNameCombiningMayusAndMinusTest() {
+    public void setAppNameCombiningUpperCaseAndLowerCaseTest() {
         testToSetAppName("ComBIninG MayUS ANd MinUS", "combining-mayus-and-minus");
     }
 
@@ -49,7 +49,7 @@ public class EquoAppTest {
     }
 
     @Test
-    public void setAppNameWithWrongStringTest() {
+    public void setAppNameWithWrongEntryTest() {
         testToSetAppName("-test-", "test");
     }
 
