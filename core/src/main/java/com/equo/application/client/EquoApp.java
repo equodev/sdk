@@ -91,10 +91,18 @@ public class EquoApp {
    * @param appName Represents the name of the application.
    */
   public static void setAppName(String appName) {
-    if (appName.startsWith("-")) {
-      appName = appName.substring(1);
+    String appId = sanitizeAppName(appName);
+    APP_ID = appId;
+    CUSTOM_URL = APP_ID + ".app";
+    addChromiumArgs(APP_ID_SWITCH + "=" + appId);
+  }
+
+  private static String sanitizeAppName(String appName) {
+    String appId = appName;
+    while (appId.startsWith("-")) {
+      appId = appId.substring(1);
     }
-    var appId = appName.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
+    appId = appId.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
         .replaceAll(" ", "-");
     if (!appId.isEmpty()) {
       appId = appId.substring(0, Math.min(50, appId.length()));
@@ -102,9 +110,7 @@ public class EquoApp {
         appId = appId.substring(0, appId.length() - 1);
       }
     }
-    APP_ID = appId;
-    CUSTOM_URL = APP_ID + ".app";
-    addChromiumArgs(APP_ID_SWITCH + "=" + appId);
+    return appId;
   }
 
   private static void checkAppId() {

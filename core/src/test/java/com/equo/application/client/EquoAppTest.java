@@ -54,6 +54,11 @@ public class EquoAppTest {
     }
 
     @Test
+    public void setAppNameStartingWith2ScoresTest() {
+        testToSetAppName("--MiApp", "miapp");
+    }
+
+    @Test
     public void setAppNameStartsWithScore() {
         testToSetAppName("-test score", "test-score");
     }
@@ -66,5 +71,10 @@ public class EquoAppTest {
     @Test
     public void createWithWrongAppName() {
         assertThatThrownBy(() -> EquoApp.create("--")).isInstanceOf(AppNameNotSpecifiedException.class);
+    }
+
+    @Test
+    public void createWithAScoreAsAnAppName() {
+        assertThatThrownBy(() -> EquoApp.create("-")).isInstanceOf(AppNameNotSpecifiedException.class);
     }
 }
