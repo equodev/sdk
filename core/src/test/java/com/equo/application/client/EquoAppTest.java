@@ -64,6 +64,16 @@ public class EquoAppTest {
     }
 
     @Test
+    public void setAppNameShouldParseCorrectlyEndingWithDashesTest() {
+        testToSetAppName("end with ---", "end-with");
+    }
+
+    @Test
+    public void setAppNameShouldParseCorrectlyStartingWithWhitespacesTest() {
+        testToSetAppName("           miapp", "miapp");
+    }
+
+    @Test
     public void setAppNameShouldParseCorrectlyTest() {
         testToSetAppName("-#!$$!#¡test-#!$$!#¡dash-#!$$!#¡", "test-dash");
     }

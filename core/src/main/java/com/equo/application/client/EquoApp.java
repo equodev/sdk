@@ -99,14 +99,14 @@ public class EquoApp {
 
   private static String sanitizeAppName(String appName) {
     String appId = appName;
+    appId = appId.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
+        .replaceAll(" ", "-");
     while (appId.startsWith("-")) {
       appId = appId.substring(1);
     }
-    appId = appId.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
-        .replaceAll(" ", "-");
     if (!appId.isEmpty()) {
       appId = appId.substring(0, Math.min(50, appId.length()));
-      if (appId.charAt(appId.length() - 1) == '-') {
+      while (appId.charAt(appId.length() - 1) == '-') {
         appId = appId.substring(0, appId.length() - 1);
       }
     }
