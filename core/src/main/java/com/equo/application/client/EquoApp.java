@@ -91,6 +91,9 @@ public class EquoApp {
    * @param appName Represents the name of the application.
    */
   public static void setAppName(String appName) {
+    if (appName.startsWith("-")) {
+      appName = appName.substring(1);
+    }
     var appId = appName.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
         .replaceAll(" ", "-");
     if (!appId.isEmpty()) {

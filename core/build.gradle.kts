@@ -54,6 +54,7 @@ dependencies {
     runtimeOnly("org.apache.felix:org.apache.felix.scr:2.2.6")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+    testImplementation("org.assertj:assertj-core:3.+")
     testImplementation("org.mockito:mockito-core:5.7.0")
 }
 

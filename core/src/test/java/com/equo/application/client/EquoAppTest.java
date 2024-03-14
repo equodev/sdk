@@ -1,31 +1,70 @@
 package com.equo.application.client;
 
+import com.equo.application.client.exceptions.AppNameNotSpecifiedException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class EquoAppTest {
 
+    private void testToSetAppName(String appName, String expected) {
+        EquoApp.setAppName(appName);
+        assertThat(EquoApp.getAppName()).isNotBlank().isEqualTo(expected);
+    }
+
     @Test
     public void setNameAppTest() {
-        EquoApp.setAppName("FIRST-TEST");
-        assertEquals("first-test", EquoApp.getAppName());
+        testToSetAppName("FIRST-TEST", "first-test");
+    }
 
-        EquoApp.setAppName("simple-url-app test with spaces");
-        assertEquals("simple-url-app-test-with-spaces", EquoApp.getAppName());
+    @Test
+    public void setAppNameWithSpacesTest() {
+        testToSetAppName("simple-url-app test with spaces", "simple-url-app-test-with-spaces");
+    }
 
-        EquoApp.setAppName("test with          more than one space");
-        assertEquals("test-with-more-than-one-space", EquoApp.getAppName());
+    @Test
+    public void setAppNameWithMoraThanOneSpaceTest() {
+        testToSetAppName("test with          more than one space",
+                "test-with-more-than-one-space");
+    }
 
-        EquoApp.setAppName("ComBIninG MayUS ANd MinUS");
-        assertEquals("combining-mayus-and-minus", EquoApp.getAppName());
+    @Test
+    public void setAppNameCombiningMayusAndMinusTest() {
+        testToSetAppName("ComBIninG MayUS ANd MinUS", "combining-mayus-and-minus");
+    }
 
-        EquoApp.setAppName("simple-url-app test with spaces and end with scor-e in the last position");
-        assertEquals("simple-url-app-test-with-spaces-and-end-with-scor", EquoApp.getAppName());
-        assertEquals(49, EquoApp.getAppName().length());
+    @Test
+    public void setAppNameEndWithScoreTest() {
+        testToSetAppName("simple-url-app test with spaces and end with scor-e in the last position",
+                "simple-url-app-test-with-spaces-and-end-with-scor");
+        assertThat(EquoApp.getAppName().length()).isEqualTo(49);
+    }
 
-        EquoApp.setAppName("simple-url-app test with spaces and more than 50 characteres");
-        assertEquals("simple-url-app-test-with-spaces-and-more-than-50-c", EquoApp.getAppName());
-        assertEquals(50, EquoApp.getAppName().length());
+    @Test
+    public void setAppNameMoreThan50CharactersTest() {
+        testToSetAppName("simple-url-app test with spaces and more than 50 characteres",
+                "simple-url-app-test-with-spaces-and-more-than-50-c");
+        assertThat(EquoApp.getAppName().length()).isEqualTo(50);
+    }
+
+    @Test
+    public void setAppNameWithWrongStringTest() {
+        testToSetAppName("-test-", "test");
+    }
+
+    @Test
+    public void setAppNameStartsWithScore() {
+        testToSetAppName("-test score", "test-score");
+    }
+
+    @Test
+    public void createWithEmptyAppName() {
+        assertThatThrownBy(() -> EquoApp.create("")).isInstanceOf(AppNameNotSpecifiedException.class);
+    }
+
+    @Test
+    public void createWithWrongAppName() {
+        assertThatThrownBy(() -> EquoApp.create("--")).isInstanceOf(AppNameNotSpecifiedException.class);
     }
 }
