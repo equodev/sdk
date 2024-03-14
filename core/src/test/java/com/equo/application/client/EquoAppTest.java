@@ -59,22 +59,32 @@ public class EquoAppTest {
     }
 
     @Test
-    public void setAppNameStartsWithDash() {
+    public void setAppNameStartsWithDashTest() {
         testToSetAppName("-test dash", "test-dash");
     }
 
     @Test
-    public void createWithEmptyAppName() {
+    public void setAppNameShouldParseCorrectlyTest() {
+        testToSetAppName("-#!$$!#¡test-#!$$!#¡dash-#!$$!#¡", "test-dash");
+    }
+
+    @Test
+    public void createWithEmptyAppNameTest() {
         assertThatThrownBy(() -> EquoApp.create("")).isInstanceOf(AppNameNotSpecifiedException.class);
     }
 
     @Test
-    public void createWithWrongAppName() {
+    public void createWithWrongAppNameTest() {
         assertThatThrownBy(() -> EquoApp.create("--")).isInstanceOf(AppNameNotSpecifiedException.class);
     }
 
     @Test
-    public void createWithADashAsAnAppName() {
+    public void createWithADashAsAnAppNameTest() {
         assertThatThrownBy(() -> EquoApp.create("-")).isInstanceOf(AppNameNotSpecifiedException.class);
+    }
+
+    @Test
+    public void createWithADashAsAnAppNamesTest() {
+        assertThatThrownBy(() -> EquoApp.create("-#!$$!#¡?=)(/&%$!")).isInstanceOf(AppNameNotSpecifiedException.class);
     }
 }
