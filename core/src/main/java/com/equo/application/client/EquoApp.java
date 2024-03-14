@@ -98,8 +98,7 @@ public class EquoApp {
   }
 
   private static String sanitizeAppName(String appName) {
-    String appId = appName;
-    appId = appId.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
+    String appId = appName.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
         .replaceAll(" ", "-");
     while (appId.startsWith("-")) {
       appId = appId.substring(1);
