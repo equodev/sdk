@@ -84,7 +84,7 @@ public class EquoAppTest {
     }
 
     @Test
-    public void createWithADashAsAnAppNamesTest() {
+    public void createWithATotallyWrongNameTest() {
         assertThatThrownBy(() -> EquoApp.create("-#!$$!#¡?=)(/&%$!")).isInstanceOf(AppNameNotSpecifiedException.class);
     }
 }
