@@ -25,9 +25,7 @@ public class EquoApp {
   public static final String NEW_TAB_URL_SWITCH = "--new-tab-url";
   public static final String APP_ID_SWITCH = "--app-id";
   private static final String CLASSPATH_SCHEME = "equo";
-  private static final String CUSTOM_URL = "equo.app";
-  private static final String CLASSPATH_URI =
-      String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
+  private static String CUSTOM_URL = null;
   private static final String RESOURCE_NOT_FOUND_MSG = "Resource not found: ";
   private static String APP_ID = null;
   private final IMiddlewareService middlewareService = IMiddlewareService.findServiceReference();
@@ -93,16 +91,25 @@ public class EquoApp {
    * @param appName Represents the name of the application.
    */
   public static void setAppName(String appName) {
-    var appId = appName.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
+    String appId = sanitizeAppName(appName);
+    APP_ID = appId;
+    CUSTOM_URL = APP_ID + ".app";
+    addChromiumArgs(APP_ID_SWITCH + "=" + appId);
+  }
+
+  private static String sanitizeAppName(String appName) {
+    String appId = appName.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
         .replaceAll(" ", "-");
+    while (appId.startsWith("-")) {
+      appId = appId.substring(1);
+    }
     if (!appId.isEmpty()) {
-      appId = appId.substring(0, Math.min(50, appId.length() - 1));
-      if (appId.charAt(appId.length() - 1) == '-') {
+      appId = appId.substring(0, Math.min(50, appId.length()));
+      while (appId.charAt(appId.length() - 1) == '-') {
         appId = appId.substring(0, appId.length() - 1);
       }
     }
-    APP_ID = appId;
-    addChromiumArgs(APP_ID_SWITCH + "=" + appId);
+    return appId;
   }
 
   private static void checkAppId() {
@@ -185,13 +192,14 @@ public class EquoApp {
       launch_(uri);
       return;
     }
-    String filenameUri = CLASSPATH_URI + "index.html";
+    String customUri = String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
+    String filenameUri = customUri + "index.html";
     if (!uri.isBlank()) {
-      filenameUri = CLASSPATH_URI + uri;
+      filenameUri = customUri + uri;
     }
 
     middlewareService.addResourceHandler(CLASSPATH_SCHEME, CUSTOM_URL, (request, headers) -> {
-      String resourceToFind = request.getUrl().substring(CLASSPATH_URI.length());
+      String resourceToFind = request.getUrl().substring(customUri.length());
       InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceToFind);
       if (inputStream != null) {
         return inputStream;
