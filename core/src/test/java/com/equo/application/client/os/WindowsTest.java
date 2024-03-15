@@ -6,14 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
-import java.nio.file.Path;
 
 import static com.equo.application.client.os.Windows.TEMP;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 
-public class WindowsTest {
-  private static final String APP_ID = "APP-ID";
+public class WindowsTest extends CommonOSTest {
   private Windows win;
 
   @BeforeEach
@@ -26,29 +23,21 @@ public class WindowsTest {
 
   @Test
   public void testCacheDirHome() {
-    var expected = Path.of(APP_ID, Dir.CACHE.getDir()).toString();
-    var result = win.cacheDirHome().toString();
-    assertThat(result).isNotBlank().contains(expected);
+    testCacheDirHome(win, APP_ID, Dir.CACHE.getDir());
   }
 
   @Test
   public void testDataDirHome() {
-    var expected = Path.of(APP_ID, Dir.DATA.getDir()).toString();
-    var result = win.dataDirHome().toString();
-    assertThat(result).isNotBlank().contains(expected);
+    testDataDirHome(win, APP_ID, Dir.DATA.getDir());
   }
 
   @Test
   public void testStateDirHome() {
-    var expected = Path.of(APP_ID, Dir.STATE.getDir()).toString();
-    var result = win.stateDirHome().toString();
-    assertThat(result).isNotBlank().contains(expected);
+    testStateDirHome(win, APP_ID, Dir.STATE.getDir());
   }
 
   @Test
   public void testRuntimeDirHome() {
-    var expected = Path.of(TEMP, APP_ID).toString();
-    var result = win.runtimeDirHome().toString();
-    assertThat(result).isNotBlank().contains(expected);
+    testRuntimeDirHome(win, TEMP, APP_ID);
   }
 }
