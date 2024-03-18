@@ -141,8 +141,6 @@ tasks.jar {
         isReleaseBranch() || isDevelopBranch() || isSnapshotVersion
     }
     manifest {
-        if (isSnapshotVersion) return@manifest
-
         attributes["Name"] = project.name
         attributes["Manifest-Version"] = "${project.version}"
         attributes["Implementation-Title"] = "$group.${rootProject.name}"
