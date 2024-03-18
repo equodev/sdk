@@ -3,13 +3,16 @@ package com.equo.application.client.os;
 import java.nio.file.Path;
 
 /**
- * The {@code CommonFolders} class represents common directories and their paths
- * in a file system. It provides methods to retrieve paths for cache, data, state, runtime,
- * and config directories. This class also handles the instantiation of platform-specific
- * implementations based on the operating system.
+ * The {@code CommonFolders} class represents common directories and their paths in a file system.
+ * It provides methods to retrieve paths for cache, data, state, runtime, and config directories.
+ * This class also handles the instantiation of platform-specific implementations based on the
+ * operating system.
  */
 public abstract class CommonFolders {
   public static final String EQUO = "equo";
+  public static final String CHROMIUM_CONFIG_DIR = "chromium";
+  public static final String POLICIES_CONFIG_DIR = "policies";
+  public static final String MANDATORY_CONFIG_DIR = "managed";
   private static CommonFolders instance = null;
 
   /**
@@ -73,11 +76,17 @@ public abstract class CommonFolders {
   public abstract Path configDir();
 
   /**
+   * Returns the path of the bookmark directory based on the rootConfig.
+   * @return The path of the bookmark directory based on the rootConfig.
+   */
+  public abstract Path bookmarkDir();
+
+  /**
    * Returns an instance of a class based on the operating system being used.
    * @return The method returns an instance of the `CommonFolders` class, depending on the operating
-   *     system in use. If it's Windows, it returns an instance of the `Windows` class; if
-   *     it's Macintosh, it returns an instance of the `Mac` class. Otherwise, it returns an
-   *     instance of the `Linux` class.
+   *     system in use. If it's Windows, it returns an instance of the `Windows` class; if it's
+   *     Macintosh, it returns an instance of the `Mac` class. Otherwise, it returns an instance 
+   *     of the `Linux` class.
    */
   public static CommonFolders getInstance() {
     if (instance == null) {
