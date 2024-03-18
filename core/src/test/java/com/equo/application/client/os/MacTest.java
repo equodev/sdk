@@ -1,19 +1,23 @@
 package com.equo.application.client.os;
 
-import com.equo.application.client.EquoApp;
-import com.equo.application.client.os.CommonFolders.Dir;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.spy;
 
 import java.lang.reflect.Field;
 
-import static com.equo.application.client.os.Mac.APP_SUPPORT;
-import static com.equo.application.client.os.Mac.CACHES;
-import static com.equo.application.client.os.Mac.LIBRARY;
-import static com.equo.application.client.os.Mac.TEMP;
-import static org.mockito.Mockito.spy;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.equo.application.client.EquoApp;
+import com.equo.application.client.os.CommonFolders.Dir;
 
 public class MacTest extends CommonOSTest {
+  public static final String LIBRARY_TEST = "Library";
+  public static final String CACHES_TEST = "Caches";
+  public static final String APP_SUPPORT_TEST = "Application Support";
+  public static final String TEMP_TEST = "/tmp";
+  public static final String CHROMIUM_CONFIG_DIR = "chromium";
+  public static final String POLICIES_CONFIG_DIR = "policies";
+  public static final String MANDATORY_CONFIG_DIR = "managed";
   private Mac mac;
 
   @BeforeEach
@@ -26,21 +30,26 @@ public class MacTest extends CommonOSTest {
 
   @Test
   public void testCacheDirHome() {
-    testCacheDirHome(mac, LIBRARY, CACHES, APP_ID, Dir.CACHE.getDir());
+    testCacheDirHome(mac, LIBRARY_TEST, CACHES_TEST, APP_ID, Dir.CACHE.getDir());
   }
 
   @Test
   public void testDataDirHome() {
-    testDataDirHome(mac, LIBRARY, APP_SUPPORT, APP_ID, Dir.DATA.getDir());
+    testDataDirHome(mac, LIBRARY_TEST, APP_SUPPORT_TEST, APP_ID, Dir.DATA.getDir());
   }
 
   @Test
   public void testStateDirHome() {
-    testStateDirHome(mac, LIBRARY, APP_SUPPORT, APP_ID, Dir.STATE.getDir());
+    testStateDirHome(mac, LIBRARY_TEST, APP_SUPPORT_TEST, APP_ID, Dir.STATE.getDir());
   }
 
   @Test
   public void testRuntimeDirHome() {
-    testRuntimeDirHome(mac, TEMP, APP_ID);
+    testRuntimeDirHome(mac, TEMP_TEST, APP_ID);
+  }
+
+  @Test
+  public void testBookmarkDirHome() {
+    testBookmarkDirHome(mac, CHROMIUM_CONFIG_DIR, POLICIES_CONFIG_DIR, MANDATORY_CONFIG_DIR);
   }
 }

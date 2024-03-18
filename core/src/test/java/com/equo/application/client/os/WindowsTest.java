@@ -1,16 +1,20 @@
 package com.equo.application.client.os;
 
-import com.equo.application.client.EquoApp;
-import com.equo.application.client.os.CommonFolders.Dir;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.spy;
 
 import java.lang.reflect.Field;
 
-import static com.equo.application.client.os.Windows.TEMP;
-import static org.mockito.Mockito.spy;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.equo.application.client.EquoApp;
+import com.equo.application.client.os.CommonFolders.Dir;
 
 public class WindowsTest extends CommonOSTest {
+  public static final String TEMP_TEST = "Temp";
+  public static final String CHROMIUM_CONFIG_DIR = "chromium";
+  public static final String POLICIES_CONFIG_DIR = "policies";
+  public static final String MANDATORY_CONFIG_DIR = "managed";
   private Windows win;
 
   @BeforeEach
@@ -38,6 +42,11 @@ public class WindowsTest extends CommonOSTest {
 
   @Test
   public void testRuntimeDirHome() {
-    testRuntimeDirHome(win, TEMP, APP_ID);
+    testRuntimeDirHome(win, TEMP_TEST, APP_ID);
+  }
+
+  @Test
+  public void testBookmarkDirHome() {
+    testBookmarkDirHome(win, CHROMIUM_CONFIG_DIR, POLICIES_CONFIG_DIR, MANDATORY_CONFIG_DIR);
   }
 }

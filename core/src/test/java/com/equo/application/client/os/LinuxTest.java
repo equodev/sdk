@@ -1,19 +1,23 @@
 package com.equo.application.client.os;
 
-import com.equo.application.client.EquoApp;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.spy;
 
 import java.lang.reflect.Field;
 
-import static com.equo.application.client.os.Linux.CACHE;
-import static com.equo.application.client.os.Linux.LOCAL;
-import static com.equo.application.client.os.Linux.RUN;
-import static com.equo.application.client.os.Linux.SHARE;
-import static com.equo.application.client.os.Linux.STATE;
-import static org.mockito.Mockito.spy;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.equo.application.client.EquoApp;
 
 public class LinuxTest extends CommonOSTest {
+  private static final String CACHE_TEST = ".cache";
+  private static final String LOCAL_TEST = ".local";
+  private static final String SHARE_TEST = "share";
+  private static final String STATE_TEST = "state";
+  private static final String RUN_TEST = "/run";
+  public static final String CHROMIUM_CONFIG_DIR = "chromium";
+  public static final String POLICIES_CONFIG_DIR = "policies";
+  public static final String MANDATORY_CONFIG_DIR = "managed";
   private Linux linux;
 
   @BeforeEach
@@ -26,22 +30,26 @@ public class LinuxTest extends CommonOSTest {
 
   @Test
   public void testCacheDirHome() {
-    testCacheDirHome(linux, CACHE, APP_ID);
+    testCacheDirHome(linux, CACHE_TEST, APP_ID);
   }
 
   @Test
   public void testDataDirHome() {
-    testDataDirHome(linux, LOCAL, SHARE, APP_ID);
+    testDataDirHome(linux, LOCAL_TEST, SHARE_TEST, APP_ID);
   }
 
   @Test
   public void testStateDirHome() {
-    testStateDirHome(linux, LOCAL, STATE, APP_ID);
+    testStateDirHome(linux, LOCAL_TEST, STATE_TEST, APP_ID);
   }
 
   @Test
   public void testRuntimeDirHome() {
-    testRuntimeDirHome(linux, RUN, APP_ID);
+    testRuntimeDirHome(linux, RUN_TEST, APP_ID);
   }
 
+  @Test
+  public void testBookmarkDirHome() {
+    testBookmarkDirHome(linux, CHROMIUM_CONFIG_DIR, POLICIES_CONFIG_DIR, MANDATORY_CONFIG_DIR);
+  }
 }

@@ -8,13 +8,14 @@ import org.apache.felix.atomos.Atomos;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
+import com.equo.application.client.bookmarks.BookmarkLoader;
+import com.equo.application.client.bookmarks.BookmarkManager;
 import com.equo.application.client.exceptions.AppNameNotSpecifiedException;
 import com.equo.chromium.ChromiumBrowser;
 import com.equo.middleware.api.IMiddlewareService;
 
 /**
- * EquoApp facilitates the easy creation of Chromium-based applications and
- * their customization.
+ * EquoApp facilitates the easy creation of Chromium-based applications and their customization.
  */
 public class EquoApp {
   public static final String CHROMIUM_ARGS = "chromium.args";
@@ -36,9 +37,7 @@ public class EquoApp {
   }
 
   /**
-   * Creates and returns a new instance of the EquoApp class with the specified
-   * appName.
-   * 
+   * Creates and returns a new instance of the EquoApp class with the specified appName.
    * @param appName Represents the unique identifier for the EquoApp.
    * @return An instance of the EquoApp class with the specified appName.
    */
@@ -48,7 +47,6 @@ public class EquoApp {
 
   /**
    * Creates and returns a new instance of the EquoApp class.
-   * 
    * @return An instance of the EquoApp class.
    */
   public static EquoApp create() {
@@ -70,7 +68,6 @@ public class EquoApp {
 
   /**
    * Sets the URL of the new tab page for the chromium app.
-   * 
    * @param url Represents the URL of the new tab page.
    * @return The method is returning an instance of the EquoApp class.
    */
@@ -83,7 +80,6 @@ public class EquoApp {
 
   /**
    * Sets the app name.
-   * 
    * @param appName Represents the name of the application.
    */
   public static void setAppName(String appName) {
@@ -118,7 +114,6 @@ public class EquoApp {
 
   /**
    * Gets the app name.
-   * 
    * @return Gets the app name.
    */
   public static String getAppName() {
@@ -133,9 +128,7 @@ public class EquoApp {
   }
 
   /**
-   * Adds an OSGi compatibility layer to the EquoApp by starting Felix in a daemon
-   * thread.
-   * 
+   * Adds an OSGi compatibility layer to the EquoApp by starting Felix in a daemon thread.
    * @return The method is returning an instance of the EquoApp class.
    */
   public EquoApp addOSGICompatibilityLayer() {
@@ -170,7 +163,6 @@ public class EquoApp {
 
   /**
    * Enable the browser UI in an EquoApp.
-   * 
    * @return The method is returning an instance of the EquoApp class.
    */
   public EquoApp withBrowserUI() {
@@ -178,12 +170,15 @@ public class EquoApp {
     return this;
   }
 
+  public EquoApp withBookmarks(BookmarkManager bookmarkManager) {
+    BookmarkLoader.save(bookmarkManager);
+    return this;
+  }
+
   /**
    * Launches the application with the given URI.
-   * 
-   * @param uri Represents either the name of the file to be launched
-   *            or a URL based on HTTP/HTTPS, this protocol is 
-   *            mandatory for URLs.
+   * @param uri Represents either the name of the file to be launched or a URL based on HTTP/HTTPS,
+   *     this protocol is mandatory for URLs.
    */
   public void launch(String uri) {
     if (uri.toLowerCase().startsWith("http")) {
@@ -212,7 +207,6 @@ public class EquoApp {
 
   /**
    * Launches the application with specified URL.
-   * 
    * @param url Represents the URL that needs to be launched.
    */
   public void launch(URL url) {
@@ -220,8 +214,7 @@ public class EquoApp {
   }
 
   /**
-   * Sets up a resource handler, try to load the index.html and launches the
-   * application.
+   * Sets up a resource handler, try to load the index.html and launches the application.
    */
   public void launch() {
     // By default, try to load the index.html in the ClassPath

@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.equo.application.client.os.CommonFolders;
 
-
 /**
  * The {@code ConfigLocations} class manages the configuration directories for various purposes.
  */

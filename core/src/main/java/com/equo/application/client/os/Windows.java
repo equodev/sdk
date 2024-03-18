@@ -49,4 +49,9 @@ public class Windows extends CommonFolders {
     return Path.of(localAppData(), EQUO, Dir.CONFIG.getDir(), EquoApp.getAppName());
   }
 
+  @Override
+  public Path bookmarkDir() {
+    return Path.of(configDir().toString(), CHROMIUM_CONFIG_DIR, POLICIES_CONFIG_DIR,
+        MANDATORY_CONFIG_DIR);
+  }
 }

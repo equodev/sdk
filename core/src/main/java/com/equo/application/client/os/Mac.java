@@ -5,9 +5,9 @@ import java.nio.file.Path;
 import com.equo.application.client.EquoApp;
 
 /**
- * The {@code Mac} class represents Mac-specific directories and their paths in the file system.
- * It extends the {@code CommonFolders} class and provides methods to retrieve paths for cache,
- * data, state, runtime, and config directories on Mac systems.
+ * The {@code Mac} class represents Mac-specific directories and their paths in the file system. It
+ * extends the {@code CommonFolders} class and provides methods to retrieve paths for cache, data,
+ * state, runtime, and config directories on Mac systems.
  */
 public class Mac extends CommonFolders {
 
@@ -51,6 +51,12 @@ public class Mac extends CommonFolders {
   @Override
   public Path configDir() {
     return Path.of(getAppSupportPath(), EQUO, Dir.CONFIG.getDir(), EquoApp.getAppName());
+  }
+
+  @Override
+  public Path bookmarkDir() {
+    return Path.of(configDir().toString(), CHROMIUM_CONFIG_DIR, POLICIES_CONFIG_DIR,
+        MANDATORY_CONFIG_DIR);
   }
 
 }

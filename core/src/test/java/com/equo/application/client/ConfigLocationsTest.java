@@ -1,12 +1,13 @@
 package com.equo.application.client;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class ConfigLocationsTest {
   private static final String TEST_APP_ID = "TEST-APP-ID";
