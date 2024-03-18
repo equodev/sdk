@@ -2,15 +2,11 @@ package com.equo.application.client;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.felix.atomos.Atomos;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.osgi.framework.launch.Framework;
 
 import com.equo.application.client.exceptions.AppNameNotSpecifiedException;
 import com.equo.chromium.ChromiumBrowser;
@@ -25,10 +21,10 @@ public class EquoApp {
   public static final String NEW_TAB_URL_SWITCH = "--new-tab-url";
   public static final String APP_ID_SWITCH = "--app-id";
   private static final String CLASSPATH_SCHEME = "equo";
-  private static String CUSTOM_URL = null;
   private static final String RESOURCE_NOT_FOUND_MSG = "Resource not found: ";
-  private static String APP_ID = null;
   private final IMiddlewareService middlewareService = IMiddlewareService.findServiceReference();
+  private static String CUSTOM_URL = null;
+  private static String APP_ID = null;
 
   private EquoApp(String appName) {
     setAppName(appName);
@@ -60,16 +56,16 @@ public class EquoApp {
   }
 
   private static void addChromiumArgs(String... values) {
-    String chromiumArgs = System.getProperty(CHROMIUM_ARGS, "");
-    StringBuilder builderChromiumArgs = new StringBuilder(chromiumArgs);
+    var chromiumArgs = System.getProperty(CHROMIUM_ARGS, "");
+    var builder = new StringBuilder(chromiumArgs);
     for (int i = 0; i < values.length; i++) {
       var value = values[i];
       if (i == 0 && !chromiumArgs.isBlank()) {
-        builderChromiumArgs.append(";");
+        builder.append(";");
       }
-      builderChromiumArgs.append(value);
+      builder.append(value);
     }
-    System.setProperty(CHROMIUM_ARGS, builderChromiumArgs.toString());
+    System.setProperty(CHROMIUM_ARGS, builder.toString());
   }
 
   /**
@@ -91,14 +87,16 @@ public class EquoApp {
    * @param appName Represents the name of the application.
    */
   public static void setAppName(String appName) {
-    String appId = sanitizeAppName(appName);
-    APP_ID = appId;
+    APP_ID = sanitizeAppName(appName);
     CUSTOM_URL = APP_ID + ".app";
-    addChromiumArgs(APP_ID_SWITCH + "=" + appId);
+    addChromiumArgs(APP_ID_SWITCH + "=" + APP_ID);
   }
 
   private static String sanitizeAppName(String appName) {
-    String appId = appName.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
+    var appId = appName.toLowerCase()
+        .replaceAll("[^a-z0-9 -]", "")
+        .replaceAll(" +", " ")
+        .trim()
         .replaceAll(" ", "-");
     while (appId.startsWith("-")) {
       appId = appId.substring(1);
@@ -145,12 +143,12 @@ public class EquoApp {
      * Start Felix in a daemon thread. It inherits this property and allows us easy
      * control from the main thread.
      */
-    Thread daemonStartup = new Thread(() -> {
-      Atomos atomos = Atomos.newAtomos();
-      Map<String, String> config = new HashMap<>();
+    var daemonStartup = new Thread(() -> {
+      var atomos = Atomos.newAtomos();
+      var config = new HashMap<String, String>();
       config.put("atomos.enable.resolution.errors", "true");
       config.put(Constants.FRAMEWORK_STORAGE, ConfigLocations.cacheHome().toString());
-      Framework framework = atomos.newFramework(config);
+      var framework = atomos.newFramework(config);
       try {
         framework.init();
         framework.start();
@@ -192,8 +190,8 @@ public class EquoApp {
       launch_(uri);
       return;
     }
-    String customUri = String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
-    String filenameUri = customUri + "index.html";
+    var customUri = String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
+    var filenameUri = customUri + "index.html";
     if (!uri.isBlank()) {
       filenameUri = customUri + uri;
     }
