@@ -13,6 +13,14 @@ apply(plugin = "signing")
 java {
     withJavadocJar()
     withSourcesJar()
+
+    registerFeature("osgiOptional") {
+        usingSourceSet(sourceSets["main"])
+    }
+
+    registerFeature("apacheFelixOptional") {
+        usingSourceSet(sourceSets["main"])
+    }
 }
 
 repositories {
@@ -47,11 +55,11 @@ dependencies {
     runtimeOnly("com.equo:com.equo.chromium.cef.win32.win32.x86_64:$chromium_version")
     runtimeOnly("com.equo:com.equo.chromium.cef.cocoa.macosx.x86_64:$chromium_version")
     implementation("com.equo:com.equo.middleware.bom:1.3.4")
-    implementation("org.apache.felix:org.apache.felix.framework:7.0.5")
-    implementation("org.apache.felix:org.apache.felix.atomos:1.0.0")
-    runtimeOnly("org.eclipse.platform:org.eclipse.osgi.services:3.11.100")
-    runtimeOnly("org.eclipse.platform:org.eclipse.osgi.util:3.7.200")
-    runtimeOnly("org.apache.felix:org.apache.felix.scr:2.2.6")
+    "apacheFelixOptionalImplementation"("org.apache.felix:org.apache.felix.framework:7.0.5")
+    "apacheFelixOptionalImplementation"("org.apache.felix:org.apache.felix.atomos:1.0.0")
+    "osgiOptionalImplementation"("org.eclipse.platform:org.eclipse.osgi.services:3.11.100")
+    "osgiOptionalImplementation"("org.eclipse.platform:org.eclipse.osgi.util:3.7.200")
+    "apacheFelixOptionalImplementation"("org.apache.felix:org.apache.felix.scr:2.2.6")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
     testImplementation("org.assertj:assertj-core:3.+")
