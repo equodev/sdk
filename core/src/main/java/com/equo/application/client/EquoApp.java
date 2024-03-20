@@ -152,7 +152,7 @@ public class EquoApp {
       try {
         framework.init();
         framework.start();
-      } catch (BundleException e) {
+      } catch (Exception e) {
         System.err.println("Error initializing the application. " + e);
       }
     });
