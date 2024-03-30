@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.HashMap;
 
 import org.apache.felix.atomos.Atomos;
-import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
 import com.equo.application.client.exceptions.AppNameNotSpecifiedException;
