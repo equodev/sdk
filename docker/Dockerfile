@@ -1,9 +1,9 @@
-FROM eclipse-temurin:11-jdk-alpine
+FROM eclipse-temurin:17-jdk-alpine
 
 CMD ["/bin/sh"]
 
 COPY --from=golang:1.22-alpine /usr/local/go/ /usr/local/go/
-COPY --from=registry.gitlab.com/haynes/jacoco2cobertura:1.0.8 /opt/cover2cover.py /opt
+COPY --from=registry.gitlab.com/haynes/jacoco2cobertura:1.0.10 /opt/cover2cover.py /opt
 
 ENV GOROOT /usr/local/go
 ENV GOPATH /go
@@ -16,7 +16,7 @@ RUN set -o errexit -o nounset \
 	&& echo "Installing build dependencies" \
 	&& apk add xz curl tar python3 python3-dev git \
 	&& echo "Downloading Google Cloud SDK" \
-	&& curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-463.0.0-linux-x86_64.tar.gz | tar -xz \
+	&& curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-470.0.0-linux-x86_64.tar.gz | tar -xz \
 	&& /google-cloud-sdk/install.sh -q \
     && go install github.com/git-chglog/git-chglog/cmd/git-chglog@v0.15.4
 
