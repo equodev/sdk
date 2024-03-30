@@ -36,13 +36,6 @@ build.image:
       - core/build/jacoco/test.exec
     expire_in: 12w
 
-.gcloud-auth: &gcloud-auth
-  - echo ${service_account} | base64 -d > credentials.json
-  - gcloud auth activate-service-account --key-file credentials.json
-
-.getMajor: &getMajor
-  - export MAJOR=$(./gradlew -q getMajor)
-
 image: $CI_REGISTRY_IMAGE:$Tag
 
 build:
@@ -52,13 +45,8 @@ build:
 
 publish.javadoc.jar:
   stage: build
-  before_script:
-    - *gcloud-auth
   script:
-    - ./gradlew javadocJar
-    - mv core/build/libs/core-*-javadoc.jar core/build/libs/javadoc.jar
-    - *getMajor
-    - gsutil cp -a public-read core/build/libs/javadoc.jar gs://$GCS_BUCKET/core
+    - ./scripts/publishJavadocJar.sh
 
 test:
   extends:
@@ -100,19 +88,18 @@ report:
   stage: report
   needs:
     - generate.coverage.report
+  variables: 
+    COVERAGE_FILENAME: cobertura.xml
   artifacts:
     reports:
       coverage_report:
         coverage_format: cobertura
-        path: cobertura.xml
+        path: $COVERAGE_FILENAME
     expire_in: 6w
   allow_failure: true
   coverage: '/\d+\.\d+ % covered/'
   script:
-    - jacoco_paths=`find * -path "**/src/main/java" -type d | sed -e 's@^@'"$CI_PROJECT_DIR"'/@'`
-    - python /opt/cover2cover.py build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml $jacoco_paths > cobertura.xml
-  after_script:
-    - ./gradlew print-coverage
+    - ./scripts/reportCoverage.sh
 
 changelog:
   rules:
@@ -122,31 +109,16 @@ changelog:
   stage: pre-release
   needs:
     - test
+  variables:
+    CHANGELOG_FILENAME: changelog.md
   artifacts:
     paths:
-      - changelog.md
+      - $CHANGELOG_FILENAME
   cache: {}
-  variables:
-    CHGLOG_TARGET: .chglog
-    CONFIG_PATH: chglog/conf-gitlab-1
-    GCS_CI_FILES: equo-ci-files
-    CHANGELOG_FILENAME: changelog.md
-    TAG_PATTERN: v
   before_script:
     - if [ "$PUBLISH_CHANGELOG" == "false" ]; then exit 0; fi
-    - *gcloud-auth
-    - if [ "$CI_COMMIT_BRANCH" == "develop" ]; then export MAJOR=develop; fi
   script:
-    - mkdir -p $CHGLOG_TARGET
-    - gsutil cp -R gs://$GCS_CI_FILES/master/$CONFIG_PATH $CHGLOG_TARGET
-    - project_version=$(./gradlew -q getProjectVersion)
-    - git-chglog -c .$CONFIG_PATH/config.yml -t .$CONFIG_PATH/CHANGELOG.tpl.md --tag-filter-pattern "^${TAG_PATTERN}" --repository-url $CI_PROJECT_URL --no-case --next-tag $TAG_PATTERN$project_version $TAG_PATTERN$project_version > $CHANGELOG_FILENAME
-    - ./gradlew changelog
-    - *getMajor
-    - gsutil -h "Cache-Control":" private" -h "Content-Type":" text/plain" cp -a public-read changelog.md gs://$GCS_BUCKET/core/$MAJOR/
-    - |
-      echo '[{"method": ["GET"], "origin": ["*"]}]' > cors.json
-    - gsutil cors set cors.json gs://$GCS_BUCKET
+    - ./scripts/changelog.sh
 
 release:
   rules:
