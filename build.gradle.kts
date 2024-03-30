@@ -98,9 +98,6 @@ tasks.register<JacocoReport>("jacocoRootReport") {
     }
 }
 
-val projectVersion = "${properties["project_version"]}"
-val version = Version(projectVersion)
-
 tasks.register("print-coverage") {
     val jacocoRootReport = file("build/reports/jacoco/jacocoRootReport/jacocoRootReport.csv")
     var totalInstructions = 0
@@ -130,21 +127,4 @@ tasks.register("print-coverage") {
     Logger.info("$totalInstructionCovered / $totalInstructions instructions covered")
     Logger.info("%.2f %% covered".format(percentageInstructionsCovered))
     Logger.info("------------")
-}
-
-tasks.register("changelog") {
-    val GCS_BUCKET = getenvOrDefault("GCS_BUCKET")
-    val changelogFilename = "changelog.md"
-    val changelog = file(changelogFilename).readText() +
-            GSUtil().cat("$GCS_BUCKET/core/${version.getMajor()}/$changelogFilename")
-
-    writeNewFile(project, changelogFilename, changelog.toByteArray())
-}
-
-tasks.register("getProjectVersion") {
-    println(projectVersion)
-}
-
-tasks.register("getMajor") {
-    println(version.getMajor())
 }
