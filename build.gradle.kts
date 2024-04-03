@@ -1,8 +1,4 @@
-import com.equo.env.getenvOrDefault
-import com.equo.file.writeNewFile
-import com.equo.gsutil.GSUtil
 import com.equo.logger.Logger
-import com.equo.version.Version
 
 plugins {
     java
