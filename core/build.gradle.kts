@@ -43,17 +43,16 @@ fun isDevelopBranch(): Boolean {
     return getCommitBranch() == "develop"
 }
 
-val chromium_version = "116.0.3"
+// The Chromium SWT library could depend on a different version of Chromium CEF.
+// see: https://docs.equo.dev/chromium/116.x/reference/release-notes.html for more details.
+val chromium_swt_version = "116.0.6"
+val chromium_cef_version = "116.0.6"
+val osName = System.getProperty("os.name").lowercase()
+val platformAttr = Attribute.of("\${equo.platform}", String::class.java)
 
 dependencies {
-    implementation("com.equo:com.equo.chromium") {
-        version {
-            strictly(chromium_version)
-        }
-    }
-    runtimeOnly("com.equo:com.equo.chromium.cef.gtk.linux.x86_64:$chromium_version")
-    runtimeOnly("com.equo:com.equo.chromium.cef.win32.win32.x86_64:$chromium_version")
-    runtimeOnly("com.equo:com.equo.chromium.cef.cocoa.macosx.x86_64:$chromium_version")
+    implementation("com.equo:com.equo.chromium:$chromium_swt_version")
+    runtimeOnly("com.equo:com.equo.chromium.cef.$platformAttr:$chromium_cef_version")
     implementation("com.equo:com.equo.middleware.bom:1.3.4")
     "apacheFelixOptionalImplementation"("org.apache.felix:org.apache.felix.framework:7.0.5")
     "apacheFelixOptionalImplementation"("org.apache.felix:org.apache.felix.atomos:1.0.0")
@@ -86,6 +85,14 @@ publishing {
                 name = "Equo SDK"
                 description = "Create modern browser-based desktop apps with Java"
                 url = "https://github.com/$githubRepo"
+
+
+                properties = mapOf(
+                    "project.build.sourceEncoding" to Charsets.UTF_8.name(),
+                    "project.reporting.outputEncoding" to Charsets.UTF_8.name(),
+                    "maven.compiler.target" to "11",
+                    "maven.compiler.source" to "11"
+                )
 
                 licenses {
                     license {
@@ -132,9 +139,9 @@ signing {
         isReleaseVersion && gradle.taskGraph.hasTask("publish")
     })
     val signingKeyInBase64Provider = providers
-            .environmentVariable("GPG_SIGNING_KEY")
+        .environmentVariable("GPG_SIGNING_KEY")
     val signingPassphrase = providers
-            .environmentVariable("GPG_SIGNING_PASSPHRASE")
+        .environmentVariable("GPG_SIGNING_PASSPHRASE")
     if (signingKeyInBase64Provider.isPresent && signingPassphrase.isPresent) {
         val signingKeyInBase64 = signingKeyInBase64Provider.get()
         val signingKey = String(decodeBase64(signingKeyInBase64))
@@ -156,7 +163,7 @@ tasks.jar {
         attributes["Implementation-Vendor"] = "Equo"
         attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
         attributes["Build-Timestamp"] = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-                .format(Date())
+            .format(Date())
 
         val props = System.getProperties()
         attributes["Build-Jdk"] = "${props["java.version"]} " +
@@ -180,22 +187,22 @@ tasks.jar {
         val libsDir = "$buildDir/libs"
 
         file(libsDir).listFiles()
-                ?.filter {
-                    it.path.endsWith(".jar")
+            ?.filter {
+                it.path.endsWith(".jar")
+            }
+            ?.forEach {
+                ant.withGroovyBuilder {
+                    "signjar"(
+                        "jar" to it,
+                        "destDir" to libsDir,
+                        "alias" to pkAlias,
+                        "keystore" to keystoreFile.absolutePath,
+                        "storepass" to storePassword,
+                        "keypass" to keyPassword,
+                        "storetype" to keystoreType,
+                        "preservelastmodified" to "true"
+                    )
                 }
-                ?.forEach {
-                    ant.withGroovyBuilder {
-                        "signjar"(
-                                "jar" to it,
-                                "destDir" to libsDir,
-                                "alias" to pkAlias,
-                                "keystore" to keystoreFile.absolutePath,
-                                "storepass" to storePassword,
-                                "keypass" to keyPassword,
-                                "storetype" to keystoreType,
-                                "preservelastmodified" to "true"
-                        )
-                    }
-                }
+            }
     }
 }
