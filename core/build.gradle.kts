@@ -14,11 +14,7 @@ java {
     withJavadocJar()
     withSourcesJar()
 
-    registerFeature("osgiOptional") {
-        usingSourceSet(sourceSets["main"])
-    }
-
-    registerFeature("apacheFelixOptional") {
+    registerFeature("osgiSupport") {
         usingSourceSet(sourceSets["main"])
     }
 }
@@ -55,11 +51,11 @@ dependencies {
     runtimeOnly("com.equo:com.equo.chromium.cef.win32.win32.x86_64:$chromium_version")
     runtimeOnly("com.equo:com.equo.chromium.cef.cocoa.macosx.x86_64:$chromium_version")
     implementation("com.equo:com.equo.middleware.bom:1.3.4")
-    "apacheFelixOptionalImplementation"("org.apache.felix:org.apache.felix.framework:7.0.5")
-    "apacheFelixOptionalImplementation"("org.apache.felix:org.apache.felix.atomos:1.0.0")
-    "osgiOptionalRuntimeOnly"("org.eclipse.platform:org.eclipse.osgi.services:3.11.100")
-    "osgiOptionalRuntimeOnly"("org.eclipse.platform:org.eclipse.osgi.util:3.7.200")
-    "apacheFelixOptionalRuntimeOnly"("org.apache.felix:org.apache.felix.scr:2.2.6")
+    "osgiSupportImplementation"("org.apache.felix:org.apache.felix.framework:7.0.5")
+    "osgiSupportImplementation"("org.apache.felix:org.apache.felix.atomos:1.0.0")
+    "osgiSupportRuntimeOnly"("org.eclipse.platform:org.eclipse.osgi.services:3.11.100")
+    "osgiSupportRuntimeOnly"("org.eclipse.platform:org.eclipse.osgi.util:3.7.200")
+    "osgiSupportRuntimeOnly"("org.apache.felix:org.apache.felix.scr:2.2.6")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
     testImplementation("org.assertj:assertj-core:3.+")
