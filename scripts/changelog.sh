@@ -17,7 +17,7 @@ pullChangelogTemplateFiles() {
 }
 
 createChangelog() {
-	PROJECT_VERSION=$(cat gradle.properties | grep project_version | awk -F= '{print $2}')
+	PROJECT_VERSION=$(./scripts/utils/getProjectVersion.sh)
 	TAG_PATTERN="v"
 	git-chglog -c .${CHANGELOG_CONFIG_PATH}/config.yml \
 		-t .${CHANGELOG_CONFIG_PATH}/CHANGELOG.tpl.md \
