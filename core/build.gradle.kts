@@ -27,9 +27,6 @@ java {
     registerFeature("chromiumX8664Mac") {
         usingSourceSet(sourceSets["main"])
     }
-    registerFeature("chromiumX32Linux") {
-        usingSourceSet(sourceSets["main"])
-    }
     registerFeature("chromiumX32Windows") {
         usingSourceSet(sourceSets["main"])
     }
@@ -61,7 +58,7 @@ fun isDevelopBranch(): Boolean {
     return getCommitBranch() == "develop"
 }
 
-// Chromium version could not be the same for Cef o Swt artifact.
+// Chromium version could not be the same for Cef or Swt artifact.
 // See https://docs.equo.dev/chromium/116.x/reference/release-notes.html for more details.
 val chromium_swt_version = "116.0.6"
 val chromium_cef_version = "116.0.6"
@@ -77,7 +74,6 @@ dependencies {
     "chromiumX8664WindowsRuntimeOnly"("com.equo:com.equo.chromium.cef.win32.win32.x86_64:$chromium_cef_version")
     "chromiumX8664MacRuntimeOnly"("com.equo:com.equo.chromium.cef.cocoa.macosx.x86_64:$chromium_cef_version")
     // Add x86 dependecies
-    "chromiumX32LinuxRuntimeOnly"("com.equo:com.equo.chromium.cef.gtk.linux.x86:$chromium_cef_version")
     "chromiumX32WindowsRuntimeOnly"("com.equo:com.equo.chromium.cef.win32.win32.x86:$chromium_cef_version")
     // Add aarch64 dependecies
     "chromiumAarch64LinuxRuntimeOnly"("com.equo:com.equo.chromium.cef.gtk.linux.aarch64:$chromium_cef_version")
