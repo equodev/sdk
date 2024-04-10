@@ -26,6 +26,6 @@ docker-compose.yml
 .run/
 cors.json
 MAJOR
-.chlog/
+.chglog/
 changelog.md
 *.p12
