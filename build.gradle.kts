@@ -5,6 +5,7 @@ plugins {
     jacoco
     checkstyle
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
+    id("com.github.node-gradle.node") version "7.0.2"
 }
 
 allprojects {
@@ -28,6 +29,19 @@ allprojects {
 
     java.sourceCompatibility = JavaVersion.VERSION_11
     java.targetCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.withType<ProcessResources> {
+    dependsOn("npmInstall")
+}
+
+tasks.prepareKotlinBuildScriptModel {
+    dependsOn("npmInstall")
+}
+
+node {
+    download.set(true)
+    version.set("${properties["node_version"]}")
 }
 
 subprojects {
