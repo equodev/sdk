@@ -4,9 +4,9 @@ set -x
 
 CHANGELOG_CONFIG_PATH="chglog/conf-gitlab-1"
 if [ "$CI_COMMIT_BRANCH" == "develop" ]; then
-  export MAJOR="develop"
+	export MAJOR="develop"
 else
-  export MAJOR=$(./scripts/utils/getMajor.sh)
+	export MAJOR=$(./scripts/utils/getMajor.sh)
 fi
 
 pullChangelogTemplateFiles() {
@@ -16,17 +16,23 @@ pullChangelogTemplateFiles() {
 }
 
 createChangelog() {
-	PROJECT_VERSION=$(./scripts/utils/getProjectVersion.sh)
 	TAG_PATTERN="v"
-	git-chglog -c .${CHANGELOG_CONFIG_PATH}/config.yml \
-		-t .${CHANGELOG_CONFIG_PATH}/CHANGELOG.tpl.md \
-		--tag-filter-pattern "^${TAG_PATTERN}" \
-		--repository-url $CI_PROJECT_URL \
-		--no-case \
-		--next-tag $TAG_PATTERN$PROJECT_VERSION $TAG_PATTERN$PROJECT_VERSION \
-		>$CHANGELOG_FILENAME
+	PROJECT_VERSION=$(./scripts/utils/getProjectVersion.sh)
+	CLOUD_CHANGELOG=$(gsutil cat gs://$GCS_BUCKET/core/$MAJOR/$CHANGELOG_FILENAME)
 
-	gsutil cat gs://$GCS_BUCKET/core/$MAJOR/$CHANGELOG_FILENAME >>$CHANGELOG_FILENAME
+	echo "$CLOUD_CHANGELOG" | grep "$TAG_PATTERN$PROJECT_VERSION"
+	if [[ $? == 1 ]]; then
+		git-chglog \
+			--config .${CHANGELOG_CONFIG_PATH}/config.yml \
+			--template .${CHANGELOG_CONFIG_PATH}/CHANGELOG.tpl.md \
+			--tag-filter-pattern "^${TAG_PATTERN}" \
+			--repository-url $CI_PROJECT_URL \
+			--no-case \
+			--next-tag $TAG_PATTERN$PROJECT_VERSION $TAG_PATTERN$PROJECT_VERSION \
+			>$CHANGELOG_FILENAME
+
+		echo "$CLOUD_CHANGELOG" >>$CHANGELOG_FILENAME
+	fi
 }
 
 publishChangelog() {
@@ -44,9 +50,9 @@ main() {
 	./scripts/utils/gcloudAuth.sh
 	pullChangelogTemplateFiles
 	createChangelog
-  if [[ $PUBLISH_CHANGELOG == "true" ]]; then
-    publishChangelog
-  fi
+	if [[ "$PUBLISH_CHANGELOG" == "true" ]]; then
+		publishChangelog
+	fi
 }
 
 ./scripts/utils/checkVariables.sh CI_PROJECT_URL GCS_BUCKET CHANGELOG_FILENAME MAJOR
