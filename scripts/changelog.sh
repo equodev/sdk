@@ -6,8 +6,7 @@ CHANGELOG_CONFIG_PATH="chglog/conf-gitlab-1"
 if [ "$CI_COMMIT_BRANCH" == "develop" ]; then
   export MAJOR="develop"
 else
-  MAJOR=$(./scripts/utils/getMajor.sh)
-  export MAJOR
+  export MAJOR=$(./scripts/utils/getMajor.sh)
 fi
 
 pullChangelogTemplateFiles() {
@@ -45,7 +44,9 @@ main() {
 	./scripts/utils/gcloudAuth.sh
 	pullChangelogTemplateFiles
 	createChangelog
-	publishChangelog
+  if [[ $PUBLISH_CHANGELOG == "true" ]]; then
+    publishChangelog
+  fi
 }
 
 ./scripts/utils/checkVariables.sh CI_PROJECT_URL GCS_BUCKET CHANGELOG_FILENAME MAJOR

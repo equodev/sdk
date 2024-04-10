@@ -63,7 +63,6 @@ java {
 repositories {
     maven("https://dl.equo.dev/middleware/mvn/release")
     maven("https://dl.equo.dev/chromium-swt-ee/equo-gpl/mvn")
-    mavenLocal()
 }
 
 version = "${properties["project_version"]}"
@@ -91,7 +90,7 @@ dependencies {
     "chromiumWindowsRuntimeOnly"("com.equo:com.equo.chromium.cef.win32.win32.x86_64:$chromium_cef_version")
     "chromiumMacRuntimeOnly"("com.equo:com.equo.chromium.cef.cocoa.macosx.x86_64:$chromium_cef_version")
     // Add x86 dependecies
-    "chromiumX86WindowsRuntimeOnly"("com.equo:com.equo.chromium.cef.win32.win32.x86:$chromium_cef_version")
+    // "chromiumX86WindowsRuntimeOnly"("com.equo:com.equo.chromium.cef.win32.win32.x86:$chromium_cef_version")
     // Add aarch64 dependecies
     "chromiumAarch64LinuxRuntimeOnly"("com.equo:com.equo.chromium.cef.gtk.linux.aarch64:$chromium_cef_version")
     "chromiumAarch64MacRuntimeOnly"("com.equo:com.equo.chromium.cef.cocoa.macosx.aarch64:$chromium_cef_version")
