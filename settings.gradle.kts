@@ -5,6 +5,6 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'sdk'
+rootProject.name = "sdk"
 
-include 'core'
+include("core")

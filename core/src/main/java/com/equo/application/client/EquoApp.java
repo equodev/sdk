@@ -2,15 +2,10 @@ package com.equo.application.client;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.felix.atomos.Atomos;
-import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.osgi.framework.launch.Framework;
 
 import com.equo.application.client.exceptions.AppNameNotSpecifiedException;
 import com.equo.chromium.ChromiumBrowser;
@@ -24,13 +19,11 @@ public class EquoApp {
   public static final String CHROMIUM_ARGS = "chromium.args";
   public static final String NEW_TAB_URL_SWITCH = "--new-tab-url";
   public static final String APP_ID_SWITCH = "--app-id";
-  private static final String CLASSPATH_SCHEME = "classpath";
-  private static final String CUSTOM_URL = "equo.app";
-  private static final String CLASSPATH_URI =
-      String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
+  private static final String CLASSPATH_SCHEME = "equo";
   private static final String RESOURCE_NOT_FOUND_MSG = "Resource not found: ";
-  private static String APP_ID = null;
   private final IMiddlewareService middlewareService = IMiddlewareService.findServiceReference();
+  private static String CUSTOM_URL = null;
+  private static String APP_ID = null;
 
   private EquoApp(String appName) {
     setAppName(appName);
@@ -62,16 +55,16 @@ public class EquoApp {
   }
 
   private static void addChromiumArgs(String... values) {
-    String chromiumArgs = System.getProperty(CHROMIUM_ARGS, "");
-    StringBuilder builderChromiumArgs = new StringBuilder(chromiumArgs);
+    var chromiumArgs = System.getProperty(CHROMIUM_ARGS, "");
+    var builder = new StringBuilder(chromiumArgs);
     for (int i = 0; i < values.length; i++) {
       var value = values[i];
       if (i == 0 && !chromiumArgs.isBlank()) {
-        builderChromiumArgs.append(";");
+        builder.append(";");
       }
-      builderChromiumArgs.append(value);
+      builder.append(value);
     }
-    System.setProperty(CHROMIUM_ARGS, builderChromiumArgs.toString());
+    System.setProperty(CHROMIUM_ARGS, builder.toString());
   }
 
   /**
@@ -93,16 +86,27 @@ public class EquoApp {
    * @param appName Represents the name of the application.
    */
   public static void setAppName(String appName) {
-    var appId = appName.toLowerCase().replaceAll("[^a-z0-9 -]", "").replaceAll(" +", " ").trim()
+    APP_ID = sanitizeAppName(appName);
+    CUSTOM_URL = APP_ID + ".app";
+    addChromiumArgs(APP_ID_SWITCH + "=" + APP_ID);
+  }
+
+  private static String sanitizeAppName(String appName) {
+    var appId = appName.toLowerCase()
+        .replaceAll("[^a-z0-9 -]", "")
+        .replaceAll(" +", " ")
+        .trim()
         .replaceAll(" ", "-");
+    while (appId.startsWith("-")) {
+      appId = appId.substring(1);
+    }
     if (!appId.isEmpty()) {
-      appId = appId.substring(0, Math.min(50, appId.length() - 1));
-      if (appId.charAt(appId.length() - 1) == '-') {
+      appId = appId.substring(0, Math.min(50, appId.length()));
+      while (appId.charAt(appId.length() - 1) == '-') {
         appId = appId.substring(0, appId.length() - 1);
       }
     }
-    APP_ID = appId;
-    addChromiumArgs(APP_ID_SWITCH + "=" + appId);
+    return appId;
   }
 
   private static void checkAppId() {
@@ -127,19 +131,6 @@ public class EquoApp {
     System.exit(0);
   }
 
-  private Path getCacheLocation() {
-    // Comply with XDG
-    // (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
-    Path baseDir;
-    String cacheHome = System.getProperty("XDG_CACHE_HOME");
-    if (cacheHome != null) {
-      baseDir = Paths.get(cacheHome);
-    } else {
-      baseDir = Paths.get(System.getProperty("user.home"), ".cache");
-    }
-    return Paths.get(baseDir.toString(), "equo", "application");
-  }
-
   /**
    * Adds an OSGi compatibility layer to the EquoApp by starting Felix in a daemon
    * thread.
@@ -151,16 +142,16 @@ public class EquoApp {
      * Start Felix in a daemon thread. It inherits this property and allows us easy
      * control from the main thread.
      */
-    Thread daemonStartup = new Thread(() -> {
-      Atomos atomos = Atomos.newAtomos();
-      Map<String, String> config = new HashMap<>();
+    var daemonStartup = new Thread(() -> {
+      var atomos = Atomos.newAtomos();
+      var config = new HashMap<String, String>();
       config.put("atomos.enable.resolution.errors", "true");
-      config.put(Constants.FRAMEWORK_STORAGE, getCacheLocation().toString());
-      Framework framework = atomos.newFramework(config);
+      config.put(Constants.FRAMEWORK_STORAGE, ConfigLocations.cacheHome().toString());
+      var framework = atomos.newFramework(config);
       try {
         framework.init();
         framework.start();
-      } catch (BundleException e) {
+      } catch (Exception e) {
         System.err.println("Error initializing the application. " + e);
       }
     });
@@ -187,20 +178,25 @@ public class EquoApp {
   }
 
   /**
-   * Sets up a resource handler for a given filename and launches the application.
-   * By default, try
-   * to load the index.html
+   * Launches the application with the given URI.
    * 
-   * @param filename Represents the name of the file to be launched.
+   * @param uri Represents either the name of the file to be launched
+   *            or a URL based on HTTP/HTTPS, this protocol is 
+   *            mandatory for URLs.
    */
-  public void launch(String filename) {
-    String uri = CLASSPATH_URI + "index.html";
-    if (filename != null && !filename.isBlank()) {
-      uri = CLASSPATH_URI + filename;
+  public void launch(String uri) {
+    if (uri.toLowerCase().startsWith("http")) {
+      launch_(uri);
+      return;
+    }
+    var customUri = String.format("%s://%s/", CLASSPATH_SCHEME, CUSTOM_URL);
+    var filenameUri = customUri + "index.html";
+    if (!uri.isBlank()) {
+      filenameUri = customUri + uri;
     }
 
     middlewareService.addResourceHandler(CLASSPATH_SCHEME, CUSTOM_URL, (request, headers) -> {
-      String resourceToFind = request.getUrl().substring(CLASSPATH_URI.length());
+      String resourceToFind = request.getUrl().substring(customUri.length());
       InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceToFind);
       if (inputStream != null) {
         return inputStream;
@@ -210,11 +206,11 @@ public class EquoApp {
       }
     });
 
-    launch_(uri);
+    launch_(filenameUri);
   }
 
   /**
-   * Launches the application with specified url.
+   * Launches the application with specified URL.
    * 
    * @param url Represents the URL that needs to be launched.
    */

@@ -6,7 +6,6 @@ import kotlin.system.exitProcess
 fun getenvOrDefault(name: String, default: String = ""): String {
     val provider = System.getenv(name) ?: default
     return provider.ifBlank {
-        Logger.error("$name is not present!")
-        exitProcess(1)
+        throw RuntimeException("$name is not present!")
     }
 }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConfigLocationsTest {
   private static final String TEST_APP_ID = "TEST-APP-ID";
@@ -23,7 +23,7 @@ public class ConfigLocationsTest {
     EquoApp.setAppName(TEST_APP_ID);
     Path path = Path.of("CacheHome");
     ConfigLocations.overrideCacheHome(path);
-    assertEquals(path, ConfigLocations.cacheHome());
+    assertThat(path).isNotNull().isEqualTo(ConfigLocations.cacheHome());
   }
 
   @Test
@@ -31,7 +31,7 @@ public class ConfigLocationsTest {
     EquoApp.setAppName(TEST_APP_ID);
     Path path = Path.of("DataHome");
     ConfigLocations.overrideDataHome(path);
-    assertEquals(path, ConfigLocations.dataHome());
+    assertThat(path).isNotNull().isEqualTo(ConfigLocations.dataHome());
   }
 
   @Test
@@ -39,7 +39,7 @@ public class ConfigLocationsTest {
     EquoApp.setAppName(TEST_APP_ID);
     Path path = Path.of("StateHome");
     ConfigLocations.overrideStateHome(path);
-    assertEquals(path, ConfigLocations.stateHome());
+    assertThat(path).isNotNull().isEqualTo(ConfigLocations.stateHome());
   }
 
   @Test
@@ -47,6 +47,6 @@ public class ConfigLocationsTest {
     EquoApp.setAppName(TEST_APP_ID);
     Path path = Path.of("RuntimeHome");
     ConfigLocations.overrideRuntimeHome(path);
-    assertEquals(path, ConfigLocations.runtimeHome());
+    assertThat(path).isNotNull().isEqualTo(ConfigLocations.runtimeHome());
   }
 }
