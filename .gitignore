@@ -17,15 +17,28 @@ gradle-app.setting
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+# IDEs
 .vscode/
 .idea/
 
+# env files
 .env.local
-docker-compose.yml
 *.env
-.run/
-cors.json
-MAJOR
+
+# Changelog
 .chglog/
 changelog.md
+
+# keyStore file
 *.p12
+
+# GCS cors
+cors.json
+
+# Node
+node_modules/
+yarn.lock
+
+# Misc
+.run/
+MAJOR
