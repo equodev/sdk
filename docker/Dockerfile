@@ -14,7 +14,7 @@ ENV PATH $GOROOT/bin:$PATH
 RUN set -o errexit -o nounset \
     && mkdir -p ${GOPATH}/src ${GOPATH}/bin \
     && echo "Installing build dependencies" \
-    && apk add xz curl tar python3 python3-dev git \
+    && apk add xz curl tar python3 python3-dev git nodejs npm \
     && echo "Downloading Google Cloud SDK" \
     && curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-470.0.0-linux-x86_64.tar.gz | tar -xz \
     && /google-cloud-sdk/install.sh -q \
