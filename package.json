@@ -1,0 +1,13 @@
+{
+  "name": "sdk",
+  "engines": {
+    "node": ">=18",
+    "yarn": "USE NPM INSTEAD"
+  },
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.0.1"
+  }
+}
