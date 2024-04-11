@@ -28,10 +28,12 @@ short_commit_pattern="^[0-9a-f]{8,9}"
 
 get_commit_list() {
 	# Patterns
-	local validate_commit_pattern="^(feat|fix|chg|del|dep|sec|ver)(?:\(([\w\\$\.\-\*\s]*)\))?:\s.{3,}"
+  local scope_pattern="\([\w$.\-*\s]*\)"
+  local options_commit_types="(feat|fix|chg|del|dep|sec|ver)"
+  local header_commit_pattern="^${options_commit_types}(${scope_pattern})?:\s.*$"
 
 	# Filter commits
-	commit_log_oneline=$(git rev-list --oneline "$range" --grep "$validate_commit_pattern" -P -i --invert-grep)
+	commit_log_oneline=$(git rev-list --oneline "$range" --grep "$header_commit_pattern" -P -i --invert-grep)
 
 	echo "$commit_log_oneline" | grep -viE "$short_commit_pattern (Merge|int:)"
 }
@@ -45,49 +47,49 @@ repeatUntil() {
 }
 
 printYellow() {
-	printf "\033[33m$@\033[m"
+	printf "\033[33m%s\033[m" "$@"
 }
 
 printBlue() {
-	printf "\033[34;1m$@\033[m"
+	printf "\033[34;1m%s\033[m" "$@"
 }
 
 printGray() {
-  printf "\033[90m$@\033[m"
+  printf "\033[90m%s\033[m" "$@"
 }
 
 printRed() {
-	printf "\033[31m$@\033[m"
+	printf "\033[31m%s\033[m" "$@"
 }
 
 printGreen() {
-	printf "\033[32;1m$@\033[m"
+	printf "\033[32;1m%s\033[m" "$@"
 }
 
 printCyan() {
-	printf "\033[36;1m$@\033[m"
+	printf "\033[36;1m%s\033[m" "$@"
 }
 
 printFormat() {
   local text="$1"
   shift
-  printf "[$text] %s\n" "$@"
+  printf "[ $text ] %s\n" "$@"
 }
 
 printSuccess() {
-  printFormat "$(printGreen " SUCCESS ")" "$@"
+  printFormat "$(printGreen "SUCCESS")" "$@"
 }
 
 printInfo() {
-  printFormat "$(printBlue " INFO ")" "$@"
+  printFormat "$(printBlue "INFO")" "$@"
 }
 
 printTip() {
-  printFormat "$(printCyan " TIP ")" "$@"
+  printFormat "$(printCyan "TIP")" "$@"
 }
 
 printError() {
-  printf >&2 "[$(printRed " ERROR ")] %s\n" "$@"
+  printf >&2 "[ $(printRed "ERROR") ] %s\n" "$@"
 }
 
 printErrorList() {
@@ -96,7 +98,7 @@ printErrorList() {
     local commit_msg=$(echo "$commit" | cut -d" " -f2-)
     local commit_type=$(echo "$commit_msg" | cut -d":" -f1)
     local commit_desc=$(echo "$commit_msg" | cut -d":" -f2-)
-    printError "$(printYellow "$commit_hash") $commit_type: $commit_desc"
+    printError "$(printYellow "$commit_hash") $commit_type:$commit_desc"
     printError "$(repeatUntil " " ${#commit_hash}) $(repeatUntil "$(printRed "^")" ${#commit_type})"
   done<<<"$1"
 }
