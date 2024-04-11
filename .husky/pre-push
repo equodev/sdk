@@ -24,20 +24,81 @@ url="$2"
 
 zero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')
 
-regex_commit_id_abbrev="^[a-z0-9]{8,9}"
+short_commit_pattern="^[0-9a-f]{8,9}"
 
 get_commit_list() {
-	# Regexs
-	regex_validate="^(feat|fix|chg|del|dep|sec|ver)(?:\(([\w\\$\.\-\*\s]*)\))?:\s.{3,}"
-	regex_skip_validate="$regex_commit_id_abbrev ((Merge)|int:)\s.*"
+	# Patterns
+	local validate_commit_pattern="^(feat|fix|chg|del|dep|sec|ver)(?:\(([\w\\$\.\-\*\s]*)\))?:\s.{3,}"
 
 	# Filter commits
-	commit=$(git rev-list --oneline "$range" --grep "$regex_validate" -P -i --invert-grep)
-	echo "$commit" | grep -viE "$regex_skip_validate"
+	commit_log_oneline=$(git rev-list --oneline "$range" --grep "$validate_commit_pattern" -P -i --invert-grep)
+
+	echo "$commit_log_oneline" | grep -viE "$short_commit_pattern (Merge|int:)"
 }
 
 sha_oneline() {
-	echo "$1" | grep -Po "$regex_commit_id_abbrev"
+	echo "$1" | grep -Po "$short_commit_pattern"
+}
+
+repeatUntil() {
+  printf "$1%.0s" $(seq 1 $2)
+}
+
+printYellow() {
+	printf "\033[33m$@\033[m"
+}
+
+printBlue() {
+	printf "\033[34;1m$@\033[m"
+}
+
+printGray() {
+  printf "\033[90m$@\033[m"
+}
+
+printRed() {
+	printf "\033[31m$@\033[m"
+}
+
+printGreen() {
+	printf "\033[32;1m$@\033[m"
+}
+
+printCyan() {
+	printf "\033[36;1m$@\033[m"
+}
+
+printFormat() {
+  local text="$1"
+  shift
+  printf "[$text] %s\n" "$@"
+}
+
+printSuccess() {
+  printFormat "$(printGreen " SUCCESS ")" "$@"
+}
+
+printInfo() {
+  printFormat "$(printBlue " INFO ")" "$@"
+}
+
+printTip() {
+  printFormat "$(printCyan " TIP ")" "$@"
+}
+
+printError() {
+  printf >&2 "[$(printRed " ERROR ")] %s\n" "$@"
+}
+
+printErrorList() {
+  while read commit; do
+    local commit_hash=$(echo "$commit" | cut -d" " -f1)
+    local commit_msg=$(echo "$commit" | cut -d" " -f2-)
+    local commit_type=$(echo "$commit_msg" | cut -d":" -f1)
+    local commit_desc=$(echo "$commit_msg" | cut -d":" -f2-)
+    printError "$(printYellow "$commit_hash") $commit_type: $commit_desc"
+    printError "$(repeatUntil " " ${#commit_hash}) $(repeatUntil "$(printRed "^")" ${#commit_type})"
+  done<<<"$1"
 }
 
 while read local_ref local_oid remote_ref remote_oid; do
@@ -61,32 +122,22 @@ while read local_ref local_oid remote_ref remote_oid; do
 		range="$remote_oid..$local_oid"
 
 		printf "\n"
-		printf "[  Validating commit messages:  ] %s..%s" "$(sha_oneline "$remote_oid")" "$(sha_oneline "$local_oid")"
-		printf "\n\n"
+		printInfo "Validating commit messages: $(printYellow $(sha_oneline "$remote_oid"))..$(printYellow $(sha_oneline "$local_oid"))"
+		printTip "To skip validation for a single commit, employ this pattern: '$(printGray "int: <anything>")'"
+		printf "\n"
 
 		# Check for CHANGELOG commit
 		if [ -n "$(get_commit_list)" ]; then
-			printf >&2 "\n"
-			printf >&2 "[  ERROR  ] Found commit that does not match with the pattern defined in 'Changelog procedures' (Notion wiki) in $local_ref, not pushing"
-			printf >&2 "\n\n"
-
-			# how to skip validation
-			printf >&2 "[  INFO  ] To skip validation for one commit, use this pattern: 'int: <anything>'"
-			printf >&2 "\n\n"
-
-			printf >&2 "The commits below do not match with the pattern"
-			printf >&2 "\n\n"
-			printf >&2 ">>>>>>>"
-			printf >&2 "\n\n"
-			printf >&2 "%b" "$(get_commit_list)"
-			printf >&2 "\n\n"
-			printf >&2 "<<<<<<<"
-			printf >&2 "\n\n"
+      printError "Commit found in '$(printBlue $(echo "$local_ref" | cut -d/ -f3-))' does not adhere to the pattern outlined in '$(printGray "Changelog procedures (Notion wiki)")', therefore it will not be pushed." 
+			printError "Below are the commits that do not match the specified pattern:"
+			printError ""
+			printErrorList "$(get_commit_list)"
+			printError ""
 			exit 1
 		fi
 
-		printf "[  ¡PUSH COMMITS SUCCEEDED!  ]"
-		printf "\n\n"
+    printSuccess "Push commits successfully!"
+    printf "\n"
 	fi
 done
 
