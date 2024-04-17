@@ -1,3 +1,4 @@
 [submodule "samples"]
 	path = samples
 	url = git@github.com:equodev/sdk-samples.git
+	branch = main
