@@ -12,8 +12,8 @@ apply(plugin = "signing")
 
 // Chromium version could not be the same for Cef or Swt artifact.
 // See https://docs.equo.dev/chromium/116.x/reference/release-notes.html for more details.
-val chromium_swt_version = "116.0.6"
-val chromium_cef_version = "116.0.6"
+val chromiumSwtVersion = "116.0.6"
+val chromiumCefVersion = "116.0.6"
 
 java {
     withJavadocJar()
@@ -26,37 +26,37 @@ java {
     // Init variants for x86_64
     registerFeature("chromiumLinux") {
         usingSourceSet(sourceSets["main"])
-        capability("dev.equo", "os-support", "${chromium_cef_version}")
-        capability("dev.equo", "core-chromium-x86_64-linux", "${chromium_cef_version}")
+        capability("dev.equo", "os-support", chromiumCefVersion)
+        capability("dev.equo", "core-chromium-x86_64-linux", chromiumCefVersion)
     }
     registerFeature("chromiumWindows") {
         usingSourceSet(sourceSets["main"])
-        capability("dev.equo", "os-support", "${chromium_cef_version}")
-        capability("dev.equo", "core-chromium-x86_64-windows", "${chromium_cef_version}")
+        capability("dev.equo", "os-support", chromiumCefVersion)
+        capability("dev.equo", "core-chromium-x86_64-windows", chromiumCefVersion)
     }
     registerFeature("chromiumMac") {
         usingSourceSet(sourceSets["main"])
-        capability("dev.equo", "os-support", "${chromium_cef_version}")
-        capability("dev.equo", "core-chromium-x86_64-osx", "${chromium_cef_version}")
+        capability("dev.equo", "os-support", chromiumCefVersion)
+        capability("dev.equo", "core-chromium-x86_64-osx", chromiumCefVersion)
     }
 
     // Init variants for x86
     registerFeature("chromiumX86Windows") {
         usingSourceSet(sourceSets["main"])
-        capability("dev.equo", "os-support", "${chromium_cef_version}")
-        capability("dev.equo", "core-chromium-x86-windows", "${chromium_cef_version}")
+        capability("dev.equo", "os-support", chromiumCefVersion)
+        capability("dev.equo", "core-chromium-x86-windows", chromiumCefVersion)
     }
 
     // Init variants for aarch64
     registerFeature("chromiumAarch64Linux") {
         usingSourceSet(sourceSets["main"])
-        capability("dev.equo", "os-support", "${chromium_cef_version}")
-        capability("dev.equo", "core-chromium-aarch64-linux", "${chromium_cef_version}")
+        capability("dev.equo", "os-support", chromiumCefVersion)
+        capability("dev.equo", "core-chromium-aarch64-linux", chromiumCefVersion)
     }
     registerFeature("chromiumAarch64Mac") {
         usingSourceSet(sourceSets["main"])
-        capability("dev.equo", "os-support", "${chromium_cef_version}")
-        capability("dev.equo", "core-chromium-aarch64-osx", "${chromium_cef_version}")
+        capability("dev.equo", "os-support", chromiumCefVersion)
+        capability("dev.equo", "core-chromium-aarch64-osx", chromiumCefVersion)
     }
 }
 
@@ -82,18 +82,18 @@ fun isDevelopBranch(): Boolean {
 dependencies {
     implementation("com.equo:com.equo.chromium") {
         version {
-            strictly(chromium_swt_version)
+            strictly(chromiumSwtVersion)
         }
     }
     // Add x86_64 dependecies
-    "chromiumLinuxRuntimeOnly"("com.equo:com.equo.chromium.cef.gtk.linux.x86_64:$chromium_cef_version")
-    "chromiumWindowsRuntimeOnly"("com.equo:com.equo.chromium.cef.win32.win32.x86_64:$chromium_cef_version")
-    "chromiumMacRuntimeOnly"("com.equo:com.equo.chromium.cef.cocoa.macosx.x86_64:$chromium_cef_version")
+    "chromiumLinuxRuntimeOnly"("com.equo:com.equo.chromium.cef.gtk.linux.x86_64:$chromiumCefVersion")
+    "chromiumWindowsRuntimeOnly"("com.equo:com.equo.chromium.cef.win32.win32.x86_64:$chromiumCefVersion")
+    "chromiumMacRuntimeOnly"("com.equo:com.equo.chromium.cef.cocoa.macosx.x86_64:$chromiumCefVersion")
     // Add x86 dependecies
     // "chromiumX86WindowsRuntimeOnly"("com.equo:com.equo.chromium.cef.win32.win32.x86:$chromium_cef_version")
     // Add aarch64 dependecies
-    "chromiumAarch64LinuxRuntimeOnly"("com.equo:com.equo.chromium.cef.gtk.linux.aarch64:$chromium_cef_version")
-    "chromiumAarch64MacRuntimeOnly"("com.equo:com.equo.chromium.cef.cocoa.macosx.aarch64:$chromium_cef_version")
+    "chromiumAarch64LinuxRuntimeOnly"("com.equo:com.equo.chromium.cef.gtk.linux.aarch64:$chromiumCefVersion")
+    "chromiumAarch64MacRuntimeOnly"("com.equo:com.equo.chromium.cef.cocoa.macosx.aarch64:$chromiumCefVersion")
 
     implementation("com.equo:com.equo.middleware.bom:1.3.4")
     "osgiSupportImplementation"("org.apache.felix:org.apache.felix.framework:7.0.5")
