@@ -61,7 +61,6 @@ java {
 }
 
 repositories {
-    maven("https://dl.equo.dev/middleware/mvn/release")
     maven("https://dl.equo.dev/chromium-swt-ee/equo-gpl/mvn")
 }
 
@@ -95,7 +94,7 @@ dependencies {
     "chromiumAarch64LinuxRuntimeOnly"("com.equo:com.equo.chromium.cef.gtk.linux.aarch64:$chromiumCefVersion")
     "chromiumAarch64MacRuntimeOnly"("com.equo:com.equo.chromium.cef.cocoa.macosx.aarch64:$chromiumCefVersion")
 
-    implementation("com.equo:com.equo.middleware.bom:1.3.4")
+    implementation("dev.equo:com.equo.middleware.bom:1.3.5")
     "osgiSupportImplementation"("org.apache.felix:org.apache.felix.framework:7.0.5")
     "osgiSupportImplementation"("org.apache.felix:org.apache.felix.atomos:1.0.0")
     "osgiSupportRuntimeOnly"("org.eclipse.platform:org.eclipse.osgi.services:3.11.100")
