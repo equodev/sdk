@@ -1,5 +1,10 @@
 # Equo SDK
 
+[![status](https://img.shields.io/badge/status-stable-blue.svg)](https://github.com/equodev/sdk/tree/main)
+[License](https://img.shields.io/badge/License-MIT-green.svg)
+[![Chat Server](https://img.shields.io/badge/chat-discord-7289da.svg)](https://discord.gg/fFEEhm8etB)
+[![docs](https://img.shields.io/badge/docs-docs.equo.dev-blue)](https://docs.equo.dev/)
+
 The Equo SDK is an open-source set of independent components which allows users to write modern applications, and deploy them across desktop and embedded operating systems, from a single shared codebase.
 
 To render your web-based UIs, Equo SDK uses the high-performance open-source [Equo Chromium](https://github.com/equodev/chromium) browser, which can also be embedded in many existing apps, like Swing applications, JavaFx, or Eclipse RCP.
